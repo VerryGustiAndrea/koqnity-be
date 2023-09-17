@@ -2,7 +2,7 @@ const selectListCustomer = (selectListCustomerAction: Function) => {
     return async function get(httpRequest: any) {
         try {
             const { source = {}, ...info } = httpRequest.body;
-            const { customer_status, length, page, search, contact_id } = httpRequest.query;
+            const { customer_status, length, page, search, contact_id, sort_by, sort_type } = httpRequest.query;
             source.ip = httpRequest.ip;
             source.browser = httpRequest.headers['User-Agent'];
             if (httpRequest.headers['Referer']) {
@@ -13,7 +13,9 @@ const selectListCustomer = (selectListCustomerAction: Function) => {
                 page,
                 search,
                 customer_status,
-                contact_id
+                contact_id,
+                sort_by,
+                sort_type
             });
             return {
                 headers: {

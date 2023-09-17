@@ -41,11 +41,11 @@ const query = (conn: any, models: any) => {
         }
     }
 
-    async function getListCustomer(data: { contact_id: Number; customer_status: string; length: string; page: string; search: string }) {
+    async function getListCustomer(data: { contact_id: Number; customer_status: string; length: string; page: string; search: string; sort_by: string; sort_type: string }) {
         try {
             const pool = await conn();
 
-            const { contact_id, customer_status, length, page, search } = data; // deconstruct
+            const { contact_id, customer_status, length, page, search, sort_by, sort_type } = data; // deconstruct
             const res = await new Promise((resolve) => {
                 const sortField: any = {
                     customer_code: 'customers.customer_code',
@@ -78,6 +78,9 @@ const query = (conn: any, models: any) => {
                     });
                     sql += ' )';
                 }
+                if (sort_by) {
+                    sql += ' ORDER BY ' + sort_by + ' ' + sort_type;
+                }
 
                 pool.query(`SELECT count(*) as total from(${sql}) as dtCount`, params, (err: Error, result: any) => {
                     if (!err) {
@@ -87,7 +90,6 @@ const query = (conn: any, models: any) => {
 
                         pool.query(sql, params, (err: Error, res: Response) => {
                             pool.end(); // end connection
-
                             if (err) resolve({ data: [], count: 0, status: false, errorMessage: err });
                             resolve({ data: res, count: countData, status: true, errorMessage: '' });
                         });

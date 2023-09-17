@@ -71,11 +71,23 @@ const query = (conn: any, models: any) => {
         }
     }
 
-    async function getListBuy(data: { length: string; page: string; search: string; status: string; customer: string; min_price: string; max_price: string; start_date: string; end_date: string }) {
+    async function getListBuy(data: {
+        length: string;
+        page: string;
+        search: string;
+        status: string;
+        customer: string;
+        min_price: string;
+        max_price: string;
+        start_date: string;
+        end_date: string;
+        sort_by: string;
+        sort_type: string;
+    }) {
         try {
             const pool = await conn();
 
-            const { length, page, search, status, customer, min_price, max_price, start_date, end_date } = data; // deconstruct
+            const { length, page, search, status, customer, min_price, max_price, start_date, end_date, sort_by, sort_type } = data; // deconstruct
             const res = await new Promise((resolve) => {
                 const sortField: any = {
                     customer_name: 'customers.customer_name',
@@ -118,7 +130,9 @@ const query = (conn: any, models: any) => {
                     params = [...params, end_date];
                 }
 
-                sql += ' ORDER BY buys.created_at DESC';
+                if (sort_by) {
+                    sql += ' ORDER BY ' + sort_by + ' ' + sort_type;
+                }
 
                 pool.query(`SELECT count(*) as total from(${sql}) as dtCount`, params, (err: Error, result: any) => {
                     if (!err) {

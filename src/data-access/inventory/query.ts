@@ -214,11 +214,21 @@ const query = (conn: any, models: any) => {
         }
     }
 
-    async function getListInventory(data: { length: string; page: string; search: string; category: string; merk: string; warehouse: string; customer_id: string }) {
+    async function getListInventory(data: {
+        length: string;
+        page: string;
+        search: string;
+        category: string;
+        merk: string;
+        warehouse: string;
+        customer_id: string;
+        sort_by: string;
+        sort_type: string;
+    }) {
         try {
             const pool = await conn();
 
-            const { length, page, search, category, merk, warehouse, customer_id } = data; // deconstruct
+            const { length, page, search, category, merk, warehouse, customer_id, sort_by, sort_type } = data; // deconstruct
             const res = await new Promise((resolve) => {
                 const sortField: any = {
                     inventory_name: 'inventories.name',
@@ -252,7 +262,7 @@ const query = (conn: any, models: any) => {
                 let sql: string =
                     `SELECT inventories.inventory_id` +
                     customer_query +
-                    `, inventories.code as code_inventory, inventories.name as name_inventory, ts.name as category_name, ta.name as merk_name` +
+                    `, inventories.code as code_inventory, inventories.capital_price as capital_price, inventories.name as name_inventory, ts.name as category_name, ta.name as merk_name` +
                     warehouse_query +
                     ` FROM inventories join type_inventories as ts on ts.type_id = inventories.category_id join type_inventories as ta on ta.type_id = inventories.merk_id` +
                     warehouse_join_query +
@@ -274,9 +284,9 @@ const query = (conn: any, models: any) => {
                 if (merk) {
                     sql += ' AND inventories.merk_id in (' + merk + ')';
                 }
-                // if (warehouse) {
-                //     sql += ' AND stock_warehouses.warehouse_id = "' + warehouse + '"';
-                // }
+                if (sort_by) {
+                    sql += ' ORDER BY ' + sort_by + ' ' + sort_type;
+                }
 
                 pool.query(`SELECT count(*) as total from(${sql}) as dtCount`, params, (err: Error, result: any) => {
                     if (!err) {

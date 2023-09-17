@@ -2,7 +2,7 @@ const selectListSell = (selectListSellAction: Function) => {
     return async function get(httpRequest: any) {
         try {
             const { source = {}, ...info } = httpRequest.body;
-            const { length, page, search, status, customer, min_price, max_price, start_date, end_date } = httpRequest.query;
+            const { length, page, search, status, customer, min_price, max_price, start_date, end_date, sort_by, sort_type } = httpRequest.query;
             source.ip = httpRequest.ip;
             source.browser = httpRequest.headers['User-Agent'];
             if (httpRequest.headers['Referer']) {
@@ -17,7 +17,9 @@ const selectListSell = (selectListSellAction: Function) => {
                 min_price,
                 max_price,
                 start_date,
-                end_date
+                end_date,
+                sort_by,
+                sort_type
             });
             return {
                 headers: {

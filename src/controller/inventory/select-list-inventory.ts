@@ -2,7 +2,7 @@ const selectListInventory = (selectListInventoryAction: Function) => {
     return async function get(httpRequest: any) {
         try {
             const { source = {}, ...info } = httpRequest.body;
-            const { length, page, search, category, merk, warehouse, customer_id } = httpRequest.query;
+            const { length, page, search, category, merk, warehouse, customer_id, sort_by, sort_type } = httpRequest.query;
             source.ip = httpRequest.ip;
             source.browser = httpRequest.headers['User-Agent'];
             if (httpRequest.headers['Referer']) {
@@ -15,7 +15,9 @@ const selectListInventory = (selectListInventoryAction: Function) => {
                 search,
                 category,
                 customer_id,
-                merk
+                merk,
+                sort_by,
+                sort_type
             });
             return {
                 headers: {
