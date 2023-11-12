@@ -27,7 +27,6 @@ const addInventory = (makeInventory: Function, makeVariations: Function, invento
             data.code = data.code + String(1).padStart(4, '0');
         }
         data.ordinal_number = ordinal_number;
-        console.log(data);
         const res = await inventoryDB.addInventory(data);
         // for (let i = 0; i < info.variation.length; i++) {
         //     let dataVariation = await makeVariations(info.variation[i]); // entity

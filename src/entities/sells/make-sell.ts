@@ -1,6 +1,6 @@
 const makeSell = (encrypt: Function, generateSellID: Function) => {
     return function make(info: any) {
-        const { customer_id, pay_type, warehouse_id, date_invoice, end_pay_date, send_date } = info; // deconstruct
+        const { customer_id, reference_number, pay_type, warehouse_id, date_invoice, end_pay_date, send_date } = info; // deconstruct
         if (!customer_id) {
             throw new Error('Please enter customer.');
         }
@@ -22,6 +22,7 @@ const makeSell = (encrypt: Function, generateSellID: Function) => {
 
         return Object.freeze({
             getCustomerID: () => customer_id,
+            getReferenceNumber: () => reference_number,
             getPayType: () => pay_type,
             getEndPayType: () => end_pay_date,
             getWarehouse: () => warehouse_id,

@@ -7,6 +7,7 @@ import sellUC from '../../use-cases/sells/app';
 import selectSell from './select-sell';
 import getCountStatus from './get-count-status';
 import payHistoryAdd from './add-pay-history';
+import updateSell from './update-sell';
 // #####
 const addSells = addSell(sellUC.addSells, utilUC.insertLogs);
 const updateSellStatues = updateSellStatus(sellUC.updateStatusSells, utilUC.insertLogs);
@@ -14,7 +15,7 @@ const selectSells = selectSell(sellUC.selectSells);
 const selectListSells = selectListSell(sellUC.selectListSells);
 const getCountStatues = getCountStatus(sellUC.getCountStatues);
 const addPayHistories = payHistoryAdd(sellUC.addPayHistories, utilUC.insertLogs);
-
+const updateSells = updateSell(sellUC.updateSells, utilUC.insertLogs);
 // #####
 const sellController = {
     addSells,
@@ -22,7 +23,8 @@ const sellController = {
     selectSells,
     selectListSells,
     getCountStatues,
-    addPayHistories
+    addPayHistories,
+    updateSells
 };
 
 export default sellController;

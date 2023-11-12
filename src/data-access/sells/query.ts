@@ -14,7 +14,11 @@ const query = (conn: any, models: any) => {
         getCountStatus,
         addPayHistory,
         getOrdinalNumberPayHistory,
-        updateAmountPay
+        updateAmountPay,
+        getSellItem,
+        updateItem,
+        deleteItem,
+        updateSell
     });
 
     async function addSell(data: any) {
@@ -23,6 +27,17 @@ const query = (conn: any, models: any) => {
             const res = await sell.create(data);
             return { data: res, status: true, errorMessage: null };
         } catch (e: any) {
+            return { data: null, status: false, errorMessage: e?.original?.sqlMessage ? e?.original?.sqlMessage : e };
+        }
+    }
+
+    async function updateSell(data: any) {
+        try {
+            const sell = models.sell;
+            const res = await sell.update(data, { where: { sell_id: data.sell_id } });
+            return { data: res, status: true, errorMessage: null };
+        }
+        catch (e: any) {
             return { data: null, status: false, errorMessage: e?.original?.sqlMessage ? e?.original?.sqlMessage : e };
         }
     }
@@ -43,6 +58,28 @@ const query = (conn: any, models: any) => {
             const res = await sell_item.create(data);
             return { data: res, status: true, errorMessage: null };
         } catch (e: any) {
+            return { data: null, status: false, errorMessage: e?.original?.sqlMessage ? e?.original?.sqlMessage : e };
+        }
+    }
+
+    async function updateItem(data: any) {
+        try {
+            const sell_item = models.sell_item;
+            const res = await sell_item.update(data, { where: { item_id: data.item_id } });
+            return { data: res, status: true, errorMessage: null };
+        }
+        catch (e: any) {
+            return { data: null, status: false, errorMessage: e?.original?.sqlMessage ? e?.original?.sqlMessage : e };
+        }
+    }
+
+    async function deleteItem(data: any) {
+        try {
+            const sell_item = models.sell_item;
+            const res = await sell_item.destroy({ where: { item_id: data.item_id } });
+            return { data: res, status: true, errorMessage: null };
+        }
+        catch (e: any) {
             return { data: null, status: false, errorMessage: e?.original?.sqlMessage ? e?.original?.sqlMessage : e };
         }
     }
@@ -68,6 +105,19 @@ const query = (conn: any, models: any) => {
             });
             return { data: res, status: true, errorMessage: null };
         } catch (e: any) {
+            return { data: null, status: false, errorMessage: e?.original?.sqlMessage ? e?.original?.sqlMessage : e };
+        }
+    }
+
+    async function getSellItem(data: any) {
+        try {
+            const sell_item = models.sell_item;
+            const res = await sell_item.findAll({
+                where: { sell_id: data }
+            });
+            return { data: res, status: true, errorMessage: null };
+        }
+        catch (e: any) {
             return { data: null, status: false, errorMessage: e?.original?.sqlMessage ? e?.original?.sqlMessage : e };
         }
     }

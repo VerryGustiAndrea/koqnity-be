@@ -30,7 +30,20 @@ const query = (conn: any, models: any) => {
         getPriceSellCustomer,
         selectInventorySell,
         getSellByInventory,
-        getStockFlow
+        getStockFlow,
+        getListSelectedInventory,
+        addInventoryNameCustomer,
+        updateInventoryNameCustomer,
+        deleteInventoryNameCustomer,
+        getInventoryNameCustomer,
+        addInventoryNote,
+        getInventoryNote,
+        addPriceBuyCustomer,
+        updatePriceBuyCustomer,
+        deletePriceBuyCustomer,
+        getPriceBuyCustomer,
+        selectInventoryBuy,
+        getListInventoryBuy
     });
 
     async function addType(data: any) {
@@ -181,6 +194,40 @@ const query = (conn: any, models: any) => {
         }
     }
 
+    async function selectInventoryBuy(data: any) {
+        try {
+            const pool = await conn();
+            const res = await new Promise((resolve, reject) => {
+                const { inventory_id, customer_id } = data; // deconstruct
+                let customer_query = '';
+                let customer_join_query = '';
+                if (customer_id) {
+                    customer_query = ' if(psc.price > 0, psc.price, inventories.price) as price, if(psc.price > 0, 1, 0) as isPriceBuyCustomers';
+                    customer_join_query =
+                        ` left join (SELECT price_buy_customers.inventory_id, price_buy_customers.price from price_buy_customers where customer_id ="` +
+                        customer_id +
+                        `") as psc on psc.inventory_id = inventories.inventory_id `;
+                }
+                else {
+                    customer_query = ' ,inventories.price as price';
+                }
+                let sql = `SELECT ` + customer_query + ` FROM inventories ` + customer_join_query + ` where inventories.inventory_id = "` + inventory_id + `" limit 1`;
+                let params: any = [];
+                pool.query(sql, params, (err: Error, res: any) => {
+                    console.log(res);
+                    pool.end(); // end connection
+                    if (err)
+                        resolve({ data: [], status: false, errorMessage: err });
+                    resolve({ data: res[0], status: true, errorMessage: '' });
+                });
+            });
+            return res;
+        }
+        catch (e: any) {
+            return { data: null, status: false, errorMessage: e?.original?.sqlMessage ? e?.original?.sqlMessage : e };
+        }
+    }
+
     async function updateInventory(data: any) {
         try {
             const inventory = models.inventory;
@@ -308,6 +355,145 @@ const query = (conn: any, models: any) => {
 
             return res;
         } catch (e) {
+            console.log('Error: ', e);
+        }
+    }
+    async function getListInventoryBuy(data: any) {
+        try {
+            const pool = await conn();
+            const { length, page, search, category, merk, warehouse, customer_id, sort_by, sort_type } = data; // deconstruct
+            const res = await new Promise((resolve) => {
+                const sortField: any = {
+                    inventory_name: 'inventories.name',
+                    inventory_code: 'inventories.code',
+                    category_name: 'ts.name',
+                    merk_name: 'ta.name'
+                };
+                let customer_query = '';
+                let customer_join_query = '';
+                if (customer_id) {
+                    customer_query = ' , if(psc.price > 0, psc.price, inventories.capital_price) as capital_price, inventories.name as name_inventory';
+                    customer_join_query =
+                        ` left join (SELECT price_buy_customers.inventory_id, price_buy_customers.price from price_buy_customers where customer_id ="` +
+                        customer_id +
+                        `") as psc on psc.inventory_id = inventories.inventory_id `;
+                }
+                else {
+                    customer_query = ' ,inventories.capital_price as capital_price, inventories.name as name_inventory';
+                }
+                let sql = `SELECT inventories.inventory_id` +
+                    customer_query +
+                    `, inventories.code as code_inventory, inventories.price, ts.name as category_name, ta.name as merk_name` +
+                    ` FROM inventories join type_inventories as ts on ts.type_id = inventories.category_id join type_inventories as ta on ta.type_id = inventories.merk_id` +
+                    customer_join_query +
+                    ` where inventories.inventory_id is not null `;
+                let params: any = [];
+                let countData = 0;
+                if (search) {
+                    sql += ' AND (';
+                    Object.keys(sortField).forEach((d, i) => {
+                        sql += ` ${i > 0 ? ' OR ' : ''}lower(${sortField[d]}) like ?`;
+                        params = [...params, `%${search.toLowerCase()}%`];
+                    });
+                    sql += ' )';
+                }
+                if (category) {
+                    sql += ' AND inventories.category_id in (' + category + ')';
+                }
+                if (merk) {
+                    sql += ' AND inventories.merk_id in (' + merk + ')';
+                }
+                if (sort_by) {
+                    sql += ' ORDER BY ' + sort_by + ' ' + sort_type;
+                }
+                pool.query(`SELECT count(*) as total from(${sql}) as dtCount`, params, (err: Error, result: any) => {
+                    if (!err) {
+                        countData = result[0].total;
+                        sql += ' LIMIT ? OFFSET ?';
+                        params = [...params, parseInt(length), (parseInt(page) - 1) * parseInt(length)];
+                        pool.query(sql, params, (err: Error, res: any) => {
+                            pool.end(); // end connection
+                            if (err)
+                                resolve({ data: [], count: 0, status: false, errorMessage: err });
+                            resolve({ data: res, count: countData, status: true, errorMessage: '' });
+                        });
+                    }
+                    else {
+                        resolve({ data: [], count: 0, status: false, errorMessage: err });
+                    }
+                });
+            });
+            return res;
+        }
+        catch (e) {
+            console.log('Error: ', e);
+        }
+    }
+
+    async function getListSelectedInventory(data: any) {
+        try {
+            const pool = await conn();
+            const { warehouse, customer_id, inventory_id } = data; // deconstruct
+            const res = await new Promise((resolve) => {
+                const sortField = {
+                    inventory_name: 'inventories.name',
+                    inventory_code: 'inventories.code',
+                    category_name: 'ts.name',
+                    merk_name: 'ta.name'
+                };
+                let warehouse_query = '';
+                let warehouse_join_query = '';
+                let customer_query = '';
+                let customer_join_query = '';
+                if (warehouse) {
+                    warehouse_query = `, stock_warehouses.stock_qty as stock_qty`;
+                    warehouse_join_query =
+                        ` left join (SELECT stock_qty, inventory_id FROM stock_warehouses WHERE warehouse_id="` +
+                        warehouse +
+                        `") as stock_warehouses on stock_warehouses.inventory_id = inventories.inventory_id `;
+                }
+                if (customer_id) {
+                    customer_query = ' , if(psc.price > 0, psc.price, inventories.price) as price, if(inc.inventory_name is not null, inc.inventory_name, inventories.name) as name_inventory';
+                    customer_join_query =
+                        ` left join (SELECT price_sell_customers.inventory_id, price_sell_customers.price from price_sell_customers where customer_id ="` +
+                        customer_id +
+                        `") as psc on psc.inventory_id = inventories.inventory_id ` +
+                        ` left join (SELECT inventory_name_customers.inventory_id, inventory_name_customers.inventory_name from inventory_name_customers where customer_id ="` +
+                        customer_id +
+                        `") as inc on inc.inventory_id = inventories.inventory_id `;
+                }
+                else {
+                    customer_query = ' ,inventories.price as price';
+                }
+                let sql = `SELECT inventories.inventory_id` +
+                    customer_query +
+                    `, inventories.code as code_inventory, inventories.capital_price as capital_price, ts.name as category_name, ta.name as merk_name` +
+                    warehouse_query +
+                    ` FROM inventories join type_inventories as ts on ts.type_id = inventories.category_id join type_inventories as ta on ta.type_id = inventories.merk_id` +
+                    warehouse_join_query +
+                    customer_join_query +
+                    ` where inventories.inventory_id is not null `;
+                let params: any = [];
+                let countData = 0;
+                sql += ' AND inventories.inventory_id in (' + inventory_id + ')';
+                pool.query(`SELECT count(*) as total from(${sql}) as dtCount`, params, (err: Error, result: any) => {
+                    if (!err) {
+                        countData = result[0].total;
+                        pool.query(sql, params, (err: Error, result: any) => {
+                            pool.end(); // end connection
+                            if (err)
+                                resolve({ data: [], count: 0, status: false, errorMessage: err });
+                            resolve({ data: res, count: countData, status: true, errorMessage: '' });
+                        });
+                    }
+                    else {
+                        resolve({ data: [], count: 0, status: false, errorMessage: err });
+                    }
+                });
+            });
+            return res;
+        }
+        catch (e) {
             console.log('Error: ', e);
         }
     }
@@ -606,6 +792,210 @@ const query = (conn: any, models: any) => {
 
             return res;
         } catch (e) {
+            console.log('Error: ', e);
+        }
+    }
+
+    async function addInventoryNameCustomer(data: any) {
+        try {
+            const inventory_name_customer = models.inventory_name_customer;
+            const res = await inventory_name_customer.create(data);
+            return { data: res, status: true, errorMessage: null };
+        }
+        catch (e: any) {
+            return { data: null, status: false, errorMessage: e?.original?.sqlMessage ? e?.original?.sqlMessage : e };
+        }
+    }
+
+    async function updateInventoryNameCustomer(data: any) {
+        try {
+            const inventory_name_customer = models.inventory_name_customer;
+            const res = await inventory_name_customer.update({ inventory_name: data.inventory_name }, { where: { inventory_id: data.inventory_id, customer_id: data.customer_id } });
+            return { data: res, status: true, errorMessage: null };
+        }
+        catch (e: any) {
+            return { data: null, status: false, errorMessage: e?.original?.sqlMessage ? e?.original?.sqlMessage : e };
+        }
+    }
+
+    async function deleteInventoryNameCustomer(data: any) {
+        try {
+            const inventory_name_customer = models.inventory_name_customer;
+            const res = await inventory_name_customer.destroy({ where: { inventory_id: data.inventory_id, customer_id: data.customer_id } });
+            return { data: res, status: true, errorMessage: null };
+        }
+        catch (e: any) {
+            return { data: null, status: false, errorMessage: e?.original?.sqlMessage ? e?.original?.sqlMessage : e };
+        }
+    }
+    async function getInventoryNameCustomer(data: any) {
+        try {
+            const pool = await conn();
+            const { length, page, search, inventory_id } = data; // deconstruct
+            const res = await new Promise((resolve) => {
+                const sortField: any = {
+                    customer_name: 'customers.customer_name',
+                    inventory_name: 'inventory_name_customers.inventory_name'
+                };
+                let sql = `SELECT inventory_name_customers.inventory_name, inventory_name_customers.customer_id, customers.customer_name, customers.customer_code FROM inventory_name_customers left join customers on customers.customer_id = inventory_name_customers.customer_id where inventory_name_customers.inventory_id = ?`;
+                let params = [inventory_id];
+                let countData = 0;
+                if (search) {
+                    sql += ' AND (';
+                    Object.keys(sortField).forEach((d, i) => {
+                        sql += ` ${i > 0 ? ' OR ' : ''}lower(${sortField[d]}) like ?`;
+                        params = [...params, `%${search.toLowerCase()}%`];
+                    });
+                    sql += ' )';
+                }
+                pool.query(`SELECT count(*) as total from(${sql}) as dtCount`, params, (err: Error, result: any) => {
+                    if (!err) {
+                        countData = result[0].total;
+                        sql += ' LIMIT ? OFFSET ?';
+                        params = [...params, parseInt(length), (parseInt(page) - 1) * parseInt(length)];
+                        pool.query(sql, params, (err: Error, res: any) => {
+                            pool.end(); // end connection
+                            if (err)
+                                resolve({ data: [], count: 0, status: false, errorMessage: err });
+                            resolve({ data: res, count: countData, status: true, errorMessage: '' });
+                        });
+                    }
+                    else {
+                        resolve({ data: [], count: 0, status: false, errorMessage: err });
+                    }
+                });
+            });
+            return res;
+        }
+        catch (e) {
+            console.log('Error: ', e);
+        }
+    }
+    async function addInventoryNote(data: any) {
+        try {
+            const inventory_note = models.inventory_note;
+            const res = await inventory_note.create(data);
+            return { data: res, status: true, errorMessage: null };
+        }
+        catch (e: any) {
+            return { data: null, status: false, errorMessage: e?.original?.sqlMessage ? e?.original?.sqlMessage : e };
+        }
+    }
+    async function getInventoryNote(data: any) {
+        try {
+            const pool = await conn();
+            const { length, page, search, inventory_id } = data; // deconstruct
+            const res = await new Promise((resolve) => {
+                const sortField: any = {};
+                let sql = `SELECT inventory_notes.note FROM inventory_notes where inventory_notes.inventory_id = ?`;
+                let params = [inventory_id];
+                let countData = 0;
+                if (search) {
+                    sql += ' AND (';
+                    Object.keys(sortField).forEach((d, i) => {
+                        sql += ` ${i > 0 ? ' OR ' : ''}lower(${sortField[d]}) like ?`;
+                        params = [...params, `%${search.toLowerCase()}%`];
+                    });
+                    sql += ' )';
+                }
+                pool.query(`SELECT count(*) as total from(${sql}) as dtCount`, params, (err: Error, result: any) => {
+                    if (!err) {
+                        countData = result[0].total;
+                        sql += ' LIMIT ? OFFSET ?';
+                        params = [...params, parseInt(length), (parseInt(page) - 1) * parseInt(length)];
+                        pool.query(sql, params, (err: Error, result: any) => {
+                            pool.end(); // end connection
+                            console.log(err);
+                            if (err)
+                                resolve({ data: [], count: 0, status: false, errorMessage: err });
+                            resolve({ data: res, count: countData, status: true, errorMessage: '' });
+                        });
+                    }
+                    else {
+                        resolve({ data: [], count: 0, status: false, errorMessage: err });
+                    }
+                });
+            });
+            return res;
+        }
+        catch (e) {
+            console.log('Error: ', e);
+        }
+    }
+
+    async function addPriceBuyCustomer(data: any) {
+        try {
+            const price_buy_customer = models.price_buy_customer;
+            const res = await price_buy_customer.create(data);
+            return { data: res, status: true, errorMessage: null };
+        }
+        catch (e: any) {
+            return { data: null, status: false, errorMessage: e?.original?.sqlMessage ? e?.original?.sqlMessage : e };
+        }
+    }
+    async function updatePriceBuyCustomer(data: any) {
+        try {
+            const price_buy_customer = models.price_buy_customer;
+            const res = await price_buy_customer.update({ price: data.price }, { where: { inventory_id: data.inventory_id, customer_id: data.customer_id } });
+            return { data: res, status: true, errorMessage: null };
+        }
+        catch (e: any) {
+            return { data: null, status: false, errorMessage: e?.original?.sqlMessage ? e?.original?.sqlMessage : e };
+        }
+    }
+    async function deletePriceBuyCustomer(data: any) {
+        try {
+            const price_buy_customer = models.price_buy_customer;
+            const res = await price_buy_customer.destroy({ where: { inventory_id: data.inventory_id, customer_id: data.customer_id } });
+            return { data: res, status: true, errorMessage: null };
+        }
+        catch (e: any) {
+            return { data: null, status: false, errorMessage: e?.original?.sqlMessage ? e?.original?.sqlMessage : e };
+        }
+    }
+    async function getPriceBuyCustomer(data: any) {
+        try {
+            const pool = await conn();
+            const { length, page, search, inventory_id } = data; // deconstruct
+            const res = await new Promise((resolve) => {
+                const sortField: any = {
+                    customer_name: 'customers.customer_name'
+                };
+                let sql = `SELECT price_buy_customers.price, price_buy_customers.customer_id, customers.customer_name, customers.customer_code FROM price_buy_customers left join customers on customers.customer_id = price_buy_customers.customer_id where price_buy_customers.inventory_id = ?`;
+                let params = [inventory_id];
+                let countData = 0;
+                if (search) {
+                    sql += ' AND (';
+                    Object.keys(sortField).forEach((d, i) => {
+                        sql += ` ${i > 0 ? ' OR ' : ''}lower(${sortField[d]}) like ?`;
+                        params = [...params, `%${search.toLowerCase()}%`];
+                    });
+                    sql += ' )';
+                }
+                // if (customer_id) {
+                //     sql += ' AND price_sell_customers.customer_id = ' + customer_id;
+                // }
+                pool.query(`SELECT count(*) as total from(${sql}) as dtCount`, params, (err: Error, result: any) => {
+                    if (!err) {
+                        countData = result[0].total;
+                        sql += ' LIMIT ? OFFSET ?';
+                        params = [...params, parseInt(length), (parseInt(page) - 1) * parseInt(length)];
+                        pool.query(sql, params, (err: Error, result: any) => {
+                            pool.end(); // end connection
+                            console.log(err);
+                            if (err)
+                                resolve({ data: [], count: 0, status: false, errorMessage: err });
+                            resolve({ data: res, count: countData, status: true, errorMessage: '' });
+                        });
+                    }
+                    else {
+                        resolve({ data: [], count: 0, status: false, errorMessage: err });
+                    }
+                });
+            });
+            return res;
+        }
+        catch (e) {
             console.log('Error: ', e);
         }
     }
