@@ -283,11 +283,10 @@ const query = (conn: any, models: any) => {
                     category_name: 'ts.name',
                     merk_name: 'ta.name'
                 };
-                let warehouse_query: string = '';
-                let warehouse_join_query: string = '';
-                let customer_query: string = '';
-                let customer_join_query: string = '';
-
+                let warehouse_query = '';
+                let warehouse_join_query = '';
+                let customer_query = '';
+                let customer_join_query = '';
                 if (warehouse) {
                     warehouse_query = `, stock_warehouses.stock_qty as stock_qty`;
                     warehouse_join_query =
@@ -295,21 +294,22 @@ const query = (conn: any, models: any) => {
                         warehouse +
                         `") as stock_warehouses on stock_warehouses.inventory_id = inventories.inventory_id `;
                 }
-
                 if (customer_id) {
-                    customer_query = ' , if(psc.price > 0, psc.price, inventories.price) as price';
+                    customer_query = ' , if(psc.price > 0, psc.price, inventories.price) as price, if(inc.inventory_name is not null, inc.inventory_name, inventories.name) as name_inventory';
                     customer_join_query =
                         ` left join (SELECT price_sell_customers.inventory_id, price_sell_customers.price from price_sell_customers where customer_id ="` +
                         customer_id +
-                        `") as psc on psc.inventory_id = inventories.inventory_id `;
-                } else {
+                        `") as psc on psc.inventory_id = inventories.inventory_id ` +
+                        ` left join (SELECT inventory_name_customers.inventory_id, inventory_name_customers.inventory_name from inventory_name_customers where customer_id ="` +
+                        customer_id +
+                        `" GROUP BY inventory_name_customers.inventory_id) as inc on inc.inventory_id = inventories.inventory_id `;
+                }
+                else {
                     customer_query = ' ,inventories.price as price';
                 }
-
-                let sql: string =
-                    `SELECT inventories.inventory_id` +
+                let sql = `SELECT inventories.inventory_id` +
                     customer_query +
-                    `, inventories.code as code_inventory, inventories.capital_price as capital_price, inventories.name as name_inventory, ts.name as category_name, ta.name as merk_name` +
+                    `, inventories.code as code_inventory, inventories.capital_price as capital_price, ts.name as category_name, ta.name as merk_name` +
                     warehouse_query +
                     ` FROM inventories join type_inventories as ts on ts.type_id = inventories.category_id join type_inventories as ta on ta.type_id = inventories.merk_id` +
                     warehouse_join_query +
@@ -481,9 +481,9 @@ const query = (conn: any, models: any) => {
                         countData = result[0].total;
                         pool.query(sql, params, (err: Error, result: any) => {
                             pool.end(); // end connection
-                            if (err)
-                                resolve({ data: [], count: 0, status: false, errorMessage: err });
-                            resolve({ data: res, count: countData, status: true, errorMessage: '' });
+                            if (err) { resolve({ data: [], count: 0, status: false, errorMessage: err }); } else {
+                                resolve({ data: result, count: countData, status: true, errorMessage: '' });
+                            }
                         });
                     }
                     else {
