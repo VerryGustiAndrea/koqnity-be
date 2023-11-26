@@ -2,6 +2,7 @@
 
 const updateSell = (makeItem: Function, sellDB: any, inventoryDB: any, customerDB: any) => {
     return async function post(info: any) {
+        console.log("masuk")
         let data = {
             sell_id: info.sell_id,
             pay_type: info.pay_type,
@@ -25,7 +26,7 @@ const updateSell = (makeItem: Function, sellDB: any, inventoryDB: any, customerD
         let items: any = [];
         for (let i = 0; i < info.item.length; i++) {
             let itemData = info.item[i];
-            console.log(itemData);
+            console.log("kesini gak ya")
             if (itemData.action == 'pass') {
                 let sellItemOldData = dataSellItem.find((item) => {
                     return item.item_id === itemData.item_id;
@@ -278,10 +279,23 @@ const updateSell = (makeItem: Function, sellDB: any, inventoryDB: any, customerD
                     let dataWarehouse = warehouseInfo.data;
                     dataItem.qty_before = dataWarehouse.stock_qty;
                     dataItem.qty_after = dataWarehouse.stock_qty + sellItemOldData.qty;
+                    let updateStock = await inventoryDB.updateStock({
+                        stock_qty: dataItem.qty_after,
+                        inventory_id: dataItem.inventory_id,
+                        warehouse_id: dataItem.warehouse_id,
+                        history_stock: Object.assign({}, dataItem)
+                    });
                 }
                 else {
                     dataItem.qty_before = 0;
                     dataItem.qty_after = sellItemOldData.qty;
+                    let updateStock = await inventoryDB.updateStock({
+                        stock_qty: dataItem.qty_after,
+                        inventory_id: dataItem.inventory_id,
+                        warehouse_id: dataItem.warehouse_id,
+                        history_stock: Object.assign({}, dataItem)
+                    });
+
                 }
                 let sellAction = await sellDB.deleteItem(dataItem);
             }

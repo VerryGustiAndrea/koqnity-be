@@ -7,7 +7,7 @@ const updateStatusSell = (updateStatusSellAction: Function, insertLogs: Function
             if (httpRequest.headers['Referer']) {
                 source.referrer = httpRequest.headers['Referer'];
             }
-            console.log(info, 'info');
+            console.log(info, 'oke');
             const posted = await updateStatusSellAction({
                 ...info,
                 source

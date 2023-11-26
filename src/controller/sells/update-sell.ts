@@ -3,12 +3,17 @@ const updateSell = (updateSellAction: Function, insertLogs: Function) => {
     return async function post(httpRequest: any) {
         try {
             const { source = {}, ...info } = httpRequest.body;
+            console.log("kesini");
+
             source.ip = httpRequest.ip;
             source.browser = httpRequest.headers['User-Agent'];
             if (httpRequest.headers['Referer']) {
                 source.referrer = httpRequest.headers['Referer'];
             }
-            const posted = await updateSellAction(Object.assign(Object.assign({}, info), { source }));
+            const posted = await updateSellAction({
+                ...info,
+                source
+            });
             let insertLog = await insertLogs({
                 type_activity: 'update_sell',
                 token: httpRequest.headers['token'],

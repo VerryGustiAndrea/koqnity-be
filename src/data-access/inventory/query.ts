@@ -908,7 +908,7 @@ const query = (conn: any, models: any) => {
                             console.log(err);
                             if (err)
                                 resolve({ data: [], count: 0, status: false, errorMessage: err });
-                            resolve({ data: res, count: countData, status: true, errorMessage: '' });
+                            resolve({ data: result, count: countData, status: true, errorMessage: '' });
                         });
                     }
                     else {
@@ -985,7 +985,7 @@ const query = (conn: any, models: any) => {
                             console.log(err);
                             if (err)
                                 resolve({ data: [], count: 0, status: false, errorMessage: err });
-                            resolve({ data: res, count: countData, status: true, errorMessage: '' });
+                            resolve({ data: result, count: countData, status: true, errorMessage: '' });
                         });
                     }
                     else {

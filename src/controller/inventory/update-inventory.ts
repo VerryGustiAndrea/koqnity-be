@@ -7,7 +7,6 @@ const updateInventory = (updateInventoryAction: Function, insertLogs: Function) 
             if (httpRequest.headers['Referer']) {
                 source.referrer = httpRequest.headers['Referer'];
             }
-            console.log(info, 'info');
             const posted = await updateInventoryAction({
                 ...info,
                 source
