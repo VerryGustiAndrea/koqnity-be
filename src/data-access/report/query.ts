@@ -240,7 +240,7 @@ const query = (conn: any, models: any) => {
                     invoice_code: 'sell_items.code'
                 };
 
-                let sql = `SELECT sell_items.inventory_id,inv.code as inventory_code, inv.name as inventory_name, category.name as category_name, merk.name as merk_name, sum(sell_items.qty) as qty, sum(sell_items.total) as total, sum(sell_items.total-sell_items.amount) as tax from sell_items left join inventories as inv on sell_items.inventory_id = inv.inventory_id left join sells on sells.sell_id = sell_items.sell_id left join type_inventories as category on category.type_id = inv.category_id left join type_inventories as merk on merk.type_id = inv.merk_id where sell_items.sell_id is not null `;
+                let sql = `SELECT sell_items.inventory_id, GROUP_CONCAT(DISTINCT inc.inventory_name separator ', ') as reference_name, inv.code as inventory_code, inv.name as inventory_name, category.name as category_name, merk.name as merk_name, sum(sell_items.qty) as qty, sum(sell_items.total) as total, sum(sell_items.total-sell_items.amount) as tax from sell_items left join inventories as inv on sell_items.inventory_id = inv.inventory_id left join sells on sells.sell_id = sell_items.sell_id left join type_inventories as category on category.type_id = inv.category_id left join type_inventories as merk on merk.type_id = inv.merk_id left join inventory_name_customers as inc on inc.inventory_id =inv.inventory_id where sell_items.sell_id is not null `;
                 let params: any = [];
 
                 let countData = 0;
@@ -265,6 +265,8 @@ const query = (conn: any, models: any) => {
                 pool.query(`SELECT count(*) as total from(${sql}) as dtCount`, params, (err: Error, result: any) => {
                     if (!err) {
                         countData = result[0].total;
+
+                        console.log(sql)
 
                         pool.query(sql, params, (err: Error, res: Response) => {
                             pool.end(); // end connection

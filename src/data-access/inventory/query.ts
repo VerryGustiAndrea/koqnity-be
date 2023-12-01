@@ -309,7 +309,7 @@ const query = (conn: any, models: any) => {
                 }
                 let sql = `SELECT inventories.inventory_id` +
                     customer_query +
-                    `, inventories.code as code_inventory, inventories.capital_price as capital_price, ts.name as category_name, ta.name as merk_name` +
+                    `, inventories.code as code_inventory, inventories.capital_price as capital_price, ts.name as category_name, ta.name as merk_name, inventories.created_at as created_at` +
                     warehouse_query +
                     ` FROM inventories join type_inventories as ts on ts.type_id = inventories.category_id join type_inventories as ta on ta.type_id = inventories.merk_id` +
                     warehouse_join_query +
@@ -332,7 +332,11 @@ const query = (conn: any, models: any) => {
                     sql += ' AND inventories.merk_id in (' + merk + ')';
                 }
                 if (sort_by) {
-                    sql += ' ORDER BY ' + sort_by + ' ' + sort_type;
+                    let sortType = sort_type;
+                    if (sort_type == "created_at") {
+                        sortType = "inventories.created_at"
+                    }
+                    sql += ' ORDER BY ' + sort_by + ' ' + sortType;
                 }
 
                 pool.query(`SELECT count(*) as total from(${sql}) as dtCount`, params, (err: Error, result: any) => {
