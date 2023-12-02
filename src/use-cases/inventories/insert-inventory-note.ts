@@ -10,8 +10,7 @@ const insertInventoryNote = (makeType: Function, inventoryDB: any) => {
         const res = await inventoryDB.addInventoryNote(data);
         if (res.status) {
             return { inventory_id: data.inventory_id };
-        }
-        else {
+        } else {
             throw new Error(res.errorMessage);
         }
     };

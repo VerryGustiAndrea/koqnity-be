@@ -3,8 +3,7 @@ const deletePriceBuyCustomer = (inventoryDB: any) => {
         const res = await inventoryDB.deletePriceBuyCustomer(info);
         if (res.status) {
             return res.data;
-        }
-        else {
+        } else {
             throw new Error(res.errorMessage);
         }
     };

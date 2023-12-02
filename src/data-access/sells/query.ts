@@ -36,8 +36,7 @@ const query = (conn: any, models: any) => {
             const sell = models.sell;
             const res = await sell.update(data, { where: { sell_id: data.sell_id } });
             return { data: res, status: true, errorMessage: null };
-        }
-        catch (e: any) {
+        } catch (e: any) {
             return { data: null, status: false, errorMessage: e?.original?.sqlMessage ? e?.original?.sqlMessage : e };
         }
     }
@@ -67,8 +66,7 @@ const query = (conn: any, models: any) => {
             const sell_item = models.sell_item;
             const res = await sell_item.update(data, { where: { item_id: data.item_id } });
             return { data: res, status: true, errorMessage: null };
-        }
-        catch (e: any) {
+        } catch (e: any) {
             return { data: null, status: false, errorMessage: e?.original?.sqlMessage ? e?.original?.sqlMessage : e };
         }
     }
@@ -78,8 +76,7 @@ const query = (conn: any, models: any) => {
             const sell_item = models.sell_item;
             const res = await sell_item.destroy({ where: { item_id: data.item_id } });
             return { data: res, status: true, errorMessage: null };
-        }
-        catch (e: any) {
+        } catch (e: any) {
             return { data: null, status: false, errorMessage: e?.original?.sqlMessage ? e?.original?.sqlMessage : e };
         }
     }
@@ -116,8 +113,7 @@ const query = (conn: any, models: any) => {
                 where: { sell_id: data }
             });
             return { data: res, status: true, errorMessage: null };
-        }
-        catch (e: any) {
+        } catch (e: any) {
             return { data: null, status: false, errorMessage: e?.original?.sqlMessage ? e?.original?.sqlMessage : e };
         }
     }
@@ -158,12 +154,10 @@ const query = (conn: any, models: any) => {
                     if (status == 'Lunas') {
                         sql += ' AND sells.status = ?';
                         params = [...params, status];
-                    }
-                    else if (status == 'Belum Dibayar' || status == 'Dibayar Sebagian') {
+                    } else if (status == 'Belum Dibayar' || status == 'Dibayar Sebagian') {
                         sql += ' AND sells.status = ? AND sells.end_pay_date >= curdate()';
                         params = [...params, status];
-                    }
-                    else {
+                    } else {
                         sql += ' AND sells.status != "LUNAS" AND sells.end_pay_date < curdate()';
                     }
                 }
@@ -215,8 +209,8 @@ const query = (conn: any, models: any) => {
             const pool = await conn();
 
             const res = await new Promise((resolve) => {
-                let sql = `SELECT SUM(CASE WHEN status = 'Belum Dibayar' THEN 1 ELSE 0 END) AS unpaid, SUM(CASE WHEN status = 'Dibayar Sebagian' THEN 1 ELSE 0 END) AS partial_paid, SUM(CASE WHEN status = 'Lunas' THEN 1 ELSE 0 END) AS paid, SUM(CASE WHEN status != 'LUNAS' AND end_pay_date < CURDATE() THEN 1 ELSE 0 END) AS over_unpaid, SUM(CASE WHEN status = 'Lunas' THEN 1 ELSE 0 END) AS paid, SUM(CASE WHEN status = 'Retur' THEN 1 ELSE 0 END) AS retur
-                            FROM sells`;
+                let sql = `SELECT SUM(CASE WHEN status = 'Belum Dibayar' AND end_pay_date >= CURDATE() THEN 1 ELSE 0 END) AS unpaid, SUM(CASE WHEN status = 'Dibayar Sebagian' AND end_pay_date >= CURDATE() THEN 1 ELSE 0 END) AS partial_paid, SUM(CASE WHEN status = 'Lunas' THEN 1 ELSE 0 END) AS paid, SUM(CASE WHEN status != 'LUNAS' AND end_pay_date < CURDATE() THEN 1 ELSE 0 END) AS over_unpaid, SUM(CASE WHEN status = 'Lunas' THEN 1 ELSE 0 END) AS paid, SUM(CASE WHEN status = 'Retur' THEN 1 ELSE 0 END) AS retur
+                FROM sells where sells.sell_id is not null`;
                 let params: any = [];
 
                 pool.query(sql, params, (err: Error, res: Response) => {

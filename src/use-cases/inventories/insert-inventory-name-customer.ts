@@ -1,4 +1,3 @@
-
 const insertInventoryNameCustomer = (makeType: Function, inventoryDB: any) => {
     return async function post(info: any) {
         let data = await makeType(info); // entity
@@ -13,8 +12,7 @@ const insertInventoryNameCustomer = (makeType: Function, inventoryDB: any) => {
         const res = await inventoryDB.addInventoryNameCustomer(data);
         if (res.status) {
             return { inventory_id: data.inventory_id };
-        }
-        else {
+        } else {
             throw new Error(res.errorMessage);
         }
     };

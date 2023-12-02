@@ -12,25 +12,28 @@ module.exports = (sequelize, DataTypes) => {
             InventoryNote.hasOne(models.inventory, { foreignKey: 'inventory_id', sourceKey: 'inventory_id', as: 'inventory' });
         }
     }
-    InventoryNote.init({
-        id: {
-            type: DataTypes.INTEGER,
-            autoIncrement: true,
-            primaryKey: true
+    InventoryNote.init(
+        {
+            id: {
+                type: DataTypes.INTEGER,
+                autoIncrement: true,
+                primaryKey: true
+            },
+            inventory_id: DataTypes.STRING(255),
+            note: DataTypes.STRING(255),
+            createdAt: {
+                field: 'created_at',
+                type: DataTypes.DATE
+            },
+            updatedAt: {
+                field: 'updated_at',
+                type: DataTypes.DATE
+            }
         },
-        inventory_id: DataTypes.STRING(255),
-        note: DataTypes.STRING(255),
-        createdAt: {
-            field: 'created_at',
-            type: DataTypes.DATE
-        },
-        updatedAt: {
-            field: 'updated_at',
-            type: DataTypes.DATE
+        {
+            sequelize,
+            modelName: 'inventory_note'
         }
-    }, {
-        sequelize,
-        modelName: 'inventory_note'
-    });
+    );
     return InventoryNote;
 };

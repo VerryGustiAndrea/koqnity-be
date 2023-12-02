@@ -1,8 +1,8 @@
-"use strict";
+'use strict';
 
 const updateSell = (makeItem: Function, sellDB: any, inventoryDB: any, customerDB: any) => {
     return async function post(info: any) {
-        console.log("masuk")
+        console.log('masuk');
         let data = {
             sell_id: info.sell_id,
             pay_type: info.pay_type,
@@ -26,7 +26,7 @@ const updateSell = (makeItem: Function, sellDB: any, inventoryDB: any, customerD
         let items: any = [];
         for (let i = 0; i < info.item.length; i++) {
             let itemData = info.item[i];
-            console.log("kesini gak ya")
+            console.log('kesini gak ya');
             if (itemData.action == 'pass') {
                 let sellItemOldData = dataSellItem.find((item) => {
                     return item.item_id === itemData.item_id;
@@ -51,8 +51,7 @@ const updateSell = (makeItem: Function, sellDB: any, inventoryDB: any, customerD
                     data.amount += dataItem.price * dataItem.qty;
                     data.total += dataItem.amount + (dataItem.amount * dataItem.tax) / 100;
                     let sellAction = await sellDB.updateItem(dataItem);
-                }
-                else {
+                } else {
                     let dataItem = await makeItem(info.item[i]); // entity
                     dataItem = {
                         history_id: dataItem.gHistory(),
@@ -88,8 +87,7 @@ const updateSell = (makeItem: Function, sellDB: any, inventoryDB: any, customerD
                         if (ordinalNumberItem.data) {
                             ordinal_number_item = parseInt(ordinalNumberItem.data.ordinal_number) + 1;
                             dataItem.code = dataItem.code + String(ordinal_number_item).padStart(4, '0');
-                        }
-                        else {
+                        } else {
                             ordinal_number_item = 1;
                             dataItem.code = dataItem.code + String(1).padStart(4, '0');
                         }
@@ -98,8 +96,7 @@ const updateSell = (makeItem: Function, sellDB: any, inventoryDB: any, customerD
                             let dataWarehouse = warehouseInfo.data;
                             dataItem.qty_before = dataWarehouse.stock_qty;
                             dataItem.qty_after = dataWarehouse.stock_qty + sellItemOldData.qty - dataItem.qty;
-                        }
-                        else {
+                        } else {
                             dataItem.qty_before = 0;
                             dataItem.qty_after = sellItemOldData.qty - dataItem.qty;
                         }
@@ -116,13 +113,11 @@ const updateSell = (makeItem: Function, sellDB: any, inventoryDB: any, customerD
                                 warehouse_id: dataItem.warehouse_id,
                                 history_stock: Object.assign({}, dataItem)
                             });
-                        }
-                        else {
+                        } else {
                             updateStock = await inventoryDB.addStock(Object.assign(Object.assign({}, dataItem), { stock_qty: dataItem.qty_after, stock_qty_history: dataItem.stock_qty }));
                         }
                         let sellAction = await sellDB.updateItem(dataItem);
-                    }
-                    else {
+                    } else {
                         dataItem.type = 'min';
                         dataItem.stock_qty = dataItem.qty - sellItemOldData.qty;
                         let warehouseInfo = await inventoryDB.selectStock({ inventory_id: dataItem.inventory_id, warehouse_id: data.warehouse_id });
@@ -133,8 +128,7 @@ const updateSell = (makeItem: Function, sellDB: any, inventoryDB: any, customerD
                         if (ordinalNumberItem.data) {
                             ordinal_number_item = parseInt(ordinalNumberItem.data.ordinal_number) + 1;
                             dataItem.code = dataItem.code + String(ordinal_number_item).padStart(4, '0');
-                        }
-                        else {
+                        } else {
                             ordinal_number_item = 1;
                             dataItem.code = dataItem.code + String(1).padStart(4, '0');
                         }
@@ -143,8 +137,7 @@ const updateSell = (makeItem: Function, sellDB: any, inventoryDB: any, customerD
                             let dataWarehouse = warehouseInfo.data;
                             dataItem.qty_before = dataWarehouse.stock_qty;
                             dataItem.qty_after = dataWarehouse.stock_qty - (dataItem.qty - sellItemOldData.qty);
-                        }
-                        else {
+                        } else {
                             dataItem.qty_before = 0;
                             dataItem.qty_after = -1 * (dataItem.qty - sellItemOldData.qty);
                         }
@@ -161,15 +154,13 @@ const updateSell = (makeItem: Function, sellDB: any, inventoryDB: any, customerD
                                 warehouse_id: dataItem.warehouse_id,
                                 history_stock: Object.assign({}, dataItem)
                             });
-                        }
-                        else {
+                        } else {
                             updateStock = await inventoryDB.addStock(Object.assign(Object.assign({}, dataItem), { stock_qty: dataItem.qty_after, stock_qty_history: dataItem.stock_qty }));
                         }
                         let sellAction = await sellDB.updateItem(dataItem);
                     }
                 }
-            }
-            else if (itemData.action == 'add') {
+            } else if (itemData.action == 'add') {
                 let dataItem = await makeItem(info.item[i]); // entity
                 dataItem = {
                     history_id: dataItem.gHistory(),
@@ -203,8 +194,7 @@ const updateSell = (makeItem: Function, sellDB: any, inventoryDB: any, customerD
                 if (ordinalNumberItem.data) {
                     ordinal_number_item = parseInt(ordinalNumberItem.data.ordinal_number) + 1;
                     dataItem.code = dataItem.code + String(ordinal_number_item).padStart(4, '0');
-                }
-                else {
+                } else {
                     ordinal_number_item = 1;
                     dataItem.code = dataItem.code + String(1).padStart(4, '0');
                 }
@@ -213,8 +203,7 @@ const updateSell = (makeItem: Function, sellDB: any, inventoryDB: any, customerD
                     let dataWarehouse = warehouseInfo.data;
                     dataItem.qty_before = dataWarehouse.stock_qty;
                     dataItem.qty_after = dataWarehouse.stock_qty - parseInt(dataItem.stock_qty);
-                }
-                else {
+                } else {
                     dataItem.qty_before = 0;
                     dataItem.qty_after = -1 * parseInt(dataItem.stock_qty);
                 }
@@ -231,13 +220,11 @@ const updateSell = (makeItem: Function, sellDB: any, inventoryDB: any, customerD
                         warehouse_id: dataItem.warehouse_id,
                         history_stock: Object.assign({}, dataItem)
                     });
-                }
-                else {
+                } else {
                     updateStock = await inventoryDB.addStock(Object.assign(Object.assign({}, dataItem), { stock_qty: dataItem.qty_after, stock_qty_history: dataItem.stock_qty }));
                 }
                 let sellAction = await sellDB.addItem(dataItem);
-            }
-            else if (itemData.action == 'delete') {
+            } else if (itemData.action == 'delete') {
                 let sellItemOldData = dataSellItem.find((item) => {
                     return item.item_id === itemData.item_id;
                 });
@@ -269,8 +256,7 @@ const updateSell = (makeItem: Function, sellDB: any, inventoryDB: any, customerD
                 if (ordinalNumberItem.data) {
                     ordinal_number_item = parseInt(ordinalNumberItem.data.ordinal_number) + 1;
                     dataItem.code = dataItem.code + String(ordinal_number_item).padStart(4, '0');
-                }
-                else {
+                } else {
                     ordinal_number_item = 1;
                     dataItem.code = dataItem.code + String(1).padStart(4, '0');
                 }
@@ -285,8 +271,7 @@ const updateSell = (makeItem: Function, sellDB: any, inventoryDB: any, customerD
                         warehouse_id: dataItem.warehouse_id,
                         history_stock: Object.assign({}, dataItem)
                     });
-                }
-                else {
+                } else {
                     dataItem.qty_before = 0;
                     dataItem.qty_after = sellItemOldData.qty;
                     let updateStock = await inventoryDB.updateStock({
@@ -295,7 +280,6 @@ const updateSell = (makeItem: Function, sellDB: any, inventoryDB: any, customerD
                         warehouse_id: dataItem.warehouse_id,
                         history_stock: Object.assign({}, dataItem)
                     });
-
                 }
                 let sellAction = await sellDB.deleteItem(dataItem);
             }
@@ -308,8 +292,7 @@ const updateSell = (makeItem: Function, sellDB: any, inventoryDB: any, customerD
         }
         if (insertSell) {
             return { sell_id: 'data.sell_id' };
-        }
-        else {
+        } else {
             throw new Error(insertSell.errorMessage);
         }
     };

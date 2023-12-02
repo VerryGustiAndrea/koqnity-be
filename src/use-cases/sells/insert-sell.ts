@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 const addSell = (makeSell: Function, makeItem: Function, sellDB: any, inventoryDB: any, customerDB: any, makePriceSellInventory: Function) => {
     return async function post(info: any) {
         let data = await makeSell(info); // entity
@@ -24,8 +24,7 @@ const addSell = (makeSell: Function, makeItem: Function, sellDB: any, inventoryD
         if (ordinalNumber.data) {
             data.ordinal_number = parseInt(ordinalNumber.data.ordinal_number) + 1;
             data.code = '#A' + String(data.ordinal_number).padStart(5, '0');
-        }
-        else {
+        } else {
             data.ordinal_number = 1;
             data.code = '#A' + String(1).padStart(5, '0');
         }
@@ -64,8 +63,7 @@ const addSell = (makeSell: Function, makeItem: Function, sellDB: any, inventoryD
             if (ordinalNumberItem.data) {
                 ordinal_number_item = parseInt(ordinalNumberItem.data.ordinal_number) + 1;
                 dataItem.code = dataItem.code + String(ordinal_number_item).padStart(4, '0');
-            }
-            else {
+            } else {
                 ordinal_number_item = 1;
                 dataItem.code = dataItem.code + String(1).padStart(4, '0');
             }
@@ -74,8 +72,7 @@ const addSell = (makeSell: Function, makeItem: Function, sellDB: any, inventoryD
                 let dataWarehouse = warehouseInfo.data;
                 dataItem.qty_before = dataWarehouse.stock_qty;
                 dataItem.qty_after = dataWarehouse.stock_qty - parseInt(dataItem.stock_qty);
-            }
-            else {
+            } else {
                 dataItem.qty_before = 0;
                 dataItem.qty_after = -1 * parseInt(dataItem.stock_qty);
             }
@@ -92,8 +89,7 @@ const addSell = (makeSell: Function, makeItem: Function, sellDB: any, inventoryD
                     warehouse_id: dataItem.warehouse_id,
                     history_stock: Object.assign({}, dataItem)
                 });
-            }
-            else {
+            } else {
                 updateStock = await inventoryDB.addStock(Object.assign(Object.assign({}, dataItem), { stock_qty: dataItem.qty_after, stock_qty_history: dataItem.stock_qty }));
             }
             if (dataItem.price != itemData.data.price) {
@@ -106,8 +102,7 @@ const addSell = (makeSell: Function, makeItem: Function, sellDB: any, inventoryD
                         update_at: new Date()
                     };
                     const res = await inventoryDB.addPriceSellCustomer(addPriceSellCustomerData);
-                }
-                else {
+                } else {
                     const res = await inventoryDB.updatePriceSellCustomer({
                         inventory_id: dataItem.inventory_id,
                         customer_id: data.customer_id,
@@ -125,8 +120,7 @@ const addSell = (makeSell: Function, makeItem: Function, sellDB: any, inventoryD
         }
         if (insertSell) {
             return { sell_id: data.sell_id };
-        }
-        else {
+        } else {
             throw new Error(insertSell.errorMessage);
         }
     };

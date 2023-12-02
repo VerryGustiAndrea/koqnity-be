@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 const makeInventoryNameCustomer = () => {
     return function make(info: any) {
         const { inventory_id, customer_id, inventory_name } = info; // deconstruct

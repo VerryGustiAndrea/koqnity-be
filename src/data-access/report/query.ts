@@ -229,7 +229,7 @@ const query = (conn: any, models: any) => {
         }
     }
 
-    async function getSellOfProduct(data: { search: string; inventory: string; warehouse: string; start_date: string; end_date: string, customer: string }) {
+    async function getSellOfProduct(data: { search: string; inventory: string; warehouse: string; start_date: string; end_date: string; customer: string }) {
         try {
             const pool = await conn();
 
@@ -251,7 +251,7 @@ const query = (conn: any, models: any) => {
                 if (warehouse) {
                     sql += ' AND sells.warehouse_id in (' + warehouse + ')';
                 }
-                console.log(customer)
+                console.log(customer);
                 if (customer) {
                     sql += ' AND sells.customer_id in (' + customer + ')';
                 }
@@ -270,7 +270,7 @@ const query = (conn: any, models: any) => {
                     if (!err) {
                         countData = result[0].total;
 
-                        console.log(sql)
+                        console.log(sql);
 
                         pool.query(sql, params, (err: Error, res: Response) => {
                             pool.end(); // end connection

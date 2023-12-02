@@ -13,26 +13,29 @@ module.exports = (sequelize, DataTypes) => {
             InventoryNameCustomer.hasOne(models.customer, { foreignKey: 'customer_id', sourceKey: 'customer_id', as: 'customer' });
         }
     }
-    InventoryNameCustomer.init({
-        id: {
-            type: DataTypes.INTEGER,
-            autoIncrement: true,
-            primaryKey: true
+    InventoryNameCustomer.init(
+        {
+            id: {
+                type: DataTypes.INTEGER,
+                autoIncrement: true,
+                primaryKey: true
+            },
+            customer_id: DataTypes.STRING(255),
+            inventory_id: DataTypes.STRING(255),
+            inventory_name: DataTypes.STRING(255),
+            createdAt: {
+                field: 'created_at',
+                type: DataTypes.DATE
+            },
+            updatedAt: {
+                field: 'updated_at',
+                type: DataTypes.DATE
+            }
         },
-        customer_id: DataTypes.STRING(255),
-        inventory_id: DataTypes.STRING(255),
-        inventory_name: DataTypes.STRING(255),
-        createdAt: {
-            field: 'created_at',
-            type: DataTypes.DATE
-        },
-        updatedAt: {
-            field: 'updated_at',
-            type: DataTypes.DATE
+        {
+            sequelize,
+            modelName: 'inventory_name_customer'
         }
-    }, {
-        sequelize,
-        modelName: 'inventory_name_customer'
-    });
+    );
     return InventoryNameCustomer;
 };

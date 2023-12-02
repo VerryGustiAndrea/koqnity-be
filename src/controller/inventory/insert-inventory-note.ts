@@ -1,4 +1,3 @@
-
 const addInventoryNote = (addInventoryNote: Function, insertLogs: Function) => {
     return async function post(httpRequest: any) {
         try {
@@ -22,8 +21,7 @@ const addInventoryNote = (addInventoryNote: Function, insertLogs: Function) => {
                 statusCode: 201,
                 body: { data: posted, statusCode: 201, errorMessage: null }
             };
-        }
-        catch (e: any) {
+        } catch (e: any) {
             return {
                 headers: {
                     'Content-Type': 'application/json'

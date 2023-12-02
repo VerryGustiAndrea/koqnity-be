@@ -13,26 +13,29 @@ module.exports = (sequelize, DataTypes) => {
             PriceBuyCustomer.hasOne(models.customer, { foreignKey: 'customer_id', sourceKey: 'customer_id', as: 'customer' });
         }
     }
-    PriceBuyCustomer.init({
-        id: {
-            type: DataTypes.INTEGER,
-            autoIncrement: true,
-            primaryKey: true
+    PriceBuyCustomer.init(
+        {
+            id: {
+                type: DataTypes.INTEGER,
+                autoIncrement: true,
+                primaryKey: true
+            },
+            customer_id: DataTypes.STRING(255),
+            inventory_id: DataTypes.STRING(255),
+            price: DataTypes.INTEGER,
+            createdAt: {
+                field: 'created_at',
+                type: DataTypes.DATE
+            },
+            updatedAt: {
+                field: 'updated_at',
+                type: DataTypes.DATE
+            }
         },
-        customer_id: DataTypes.STRING(255),
-        inventory_id: DataTypes.STRING(255),
-        price: DataTypes.INTEGER,
-        createdAt: {
-            field: 'created_at',
-            type: DataTypes.DATE
-        },
-        updatedAt: {
-            field: 'updated_at',
-            type: DataTypes.DATE
+        {
+            sequelize,
+            modelName: 'price_buy_customer'
         }
-    }, {
-        sequelize,
-        modelName: 'price_buy_customer'
-    });
+    );
     return PriceBuyCustomer;
 };

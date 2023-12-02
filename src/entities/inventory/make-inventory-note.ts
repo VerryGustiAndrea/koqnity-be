@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 const makeInventoryNote = () => {
     return function make(info: any) {
         const { inventory_id, note } = info; // deconstruct

@@ -110,12 +110,10 @@ const query = (conn: any, models: any) => {
                     if (status == 'Lunas') {
                         sql += ' AND buys.status = ?';
                         params = [...params, status];
-                    }
-                    else if (status == 'Belum Dibayar' || status == 'Dibayar Sebagian') {
+                    } else if (status == 'Belum Dibayar' || status == 'Dibayar Sebagian') {
                         sql += ' AND buys.status = ? AND buys.end_pay_date >= curdate()';
                         params = [...params, status];
-                    }
-                    else {
+                    } else {
                         sql += ' AND buys.status != "LUNAS" AND buys.end_pay_date < curdate()';
                     }
                 }
@@ -170,8 +168,8 @@ const query = (conn: any, models: any) => {
             const pool = await conn();
 
             const res = await new Promise((resolve) => {
-                let sql = `SELECT SUM(CASE WHEN status = 'Belum Dibayar' THEN 1 ELSE 0 END) AS unpaid, SUM(CASE WHEN status = 'Dibayar Sebagian' THEN 1 ELSE 0 END) AS partial_paid, SUM(CASE WHEN status = 'Lunas' THEN 1 ELSE 0 END) AS paid, SUM(CASE WHEN status != 'LUNAS' AND end_pay_date < CURDATE() THEN 1 ELSE 0 END) AS over_unpaid, SUM(CASE WHEN status = 'Lunas' THEN 1 ELSE 0 END) AS paid, SUM(CASE WHEN status = 'Retur' THEN 1 ELSE 0 END) AS retur
-                            FROM buys`;
+                let sql = `SELECT SUM(CASE WHEN status = 'Belum Dibayar' AND end_pay_date >= CURDATE() THEN 1 ELSE 0 END) AS unpaid, SUM(CASE WHEN status = 'Dibayar Sebagian' AND end_pay_date >= CURDATE() THEN 1 ELSE 0 END) AS partial_paid, SUM(CASE WHEN status = 'Lunas' THEN 1 ELSE 0 END) AS paid, SUM(CASE WHEN status != 'LUNAS' AND end_pay_date < CURDATE() THEN 1 ELSE 0 END) AS over_unpaid, SUM(CASE WHEN status = 'Lunas' THEN 1 ELSE 0 END) AS paid, SUM(CASE WHEN status = 'Retur' THEN 1 ELSE 0 END) AS retur
+                FROM buys`;
                 let params: any = [];
 
                 pool.query(sql, params, (err: Error, res: Response) => {

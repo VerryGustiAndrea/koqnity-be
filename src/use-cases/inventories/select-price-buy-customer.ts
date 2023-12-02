@@ -1,4 +1,3 @@
-
 const selectPriceBuyCustomer = (inventoryDB: any) => {
     return async function selectPriceBuyCustomer(info: any) {
         let data = [];
@@ -11,8 +10,7 @@ const selectPriceBuyCustomer = (inventoryDB: any) => {
                 data.push(e);
             }
             return { data: data, count: res.count, totalPage: Math.ceil(res.count / info.length) };
-        }
-        else {
+        } else {
             throw new Error(res.errorMessage);
         }
     };

@@ -1,9 +1,8 @@
-
 const updateSell = (updateSellAction: Function, insertLogs: Function) => {
     return async function post(httpRequest: any) {
         try {
             const { source = {}, ...info } = httpRequest.body;
-            console.log("kesini");
+            console.log('kesini');
 
             source.ip = httpRequest.ip;
             source.browser = httpRequest.headers['User-Agent'];
@@ -27,8 +26,7 @@ const updateSell = (updateSellAction: Function, insertLogs: Function) => {
                 statusCode: 201,
                 body: { data: posted, statusCode: 201, errorMessage: null }
             };
-        }
-        catch (e: any) {
+        } catch (e: any) {
             return {
                 headers: {
                     'Content-Type': 'application/json'

@@ -1,4 +1,3 @@
-
 const selectInventoryNameCustomer = (selectInventoryNameCustomerAction: Function) => {
     return async function get(httpRequest: any) {
         try {
@@ -22,8 +21,7 @@ const selectInventoryNameCustomer = (selectInventoryNameCustomerAction: Function
                 statusCode: 200,
                 body: { data: res, errorMessage: null, statusCode: 200 }
             };
-        }
-        catch (e: any) {
+        } catch (e: any) {
             // TODO: Error logging
             console.log(e);
             return {

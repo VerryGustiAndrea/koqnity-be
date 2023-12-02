@@ -207,8 +207,7 @@ const query = (conn: any, models: any) => {
                         ` left join (SELECT price_buy_customers.inventory_id, price_buy_customers.price from price_buy_customers where customer_id ="` +
                         customer_id +
                         `") as psc on psc.inventory_id = inventories.inventory_id `;
-                }
-                else {
+                } else {
                     customer_query = ' ,inventories.price as price';
                 }
                 let sql = `SELECT ` + customer_query + ` FROM inventories ` + customer_join_query + ` where inventories.inventory_id = "` + inventory_id + `" limit 1`;
@@ -216,14 +215,12 @@ const query = (conn: any, models: any) => {
                 pool.query(sql, params, (err: Error, res: any) => {
                     console.log(res);
                     pool.end(); // end connection
-                    if (err)
-                        resolve({ data: [], status: false, errorMessage: err });
+                    if (err) resolve({ data: [], status: false, errorMessage: err });
                     resolve({ data: res[0], status: true, errorMessage: '' });
                 });
             });
             return res;
-        }
-        catch (e: any) {
+        } catch (e: any) {
             return { data: null, status: false, errorMessage: e?.original?.sqlMessage ? e?.original?.sqlMessage : e };
         }
     }
@@ -303,11 +300,11 @@ const query = (conn: any, models: any) => {
                         ` left join (SELECT inventory_name_customers.inventory_id, inventory_name_customers.inventory_name from inventory_name_customers where customer_id ="` +
                         customer_id +
                         `" GROUP BY inventory_name_customers.inventory_id) as inc on inc.inventory_id = inventories.inventory_id `;
-                }
-                else {
+                } else {
                     customer_query = ' ,inventories.price as price';
                 }
-                let sql = `SELECT inventories.inventory_id` +
+                let sql =
+                    `SELECT inventories.inventory_id` +
                     customer_query +
                     `, inventories.code as code_inventory, inventories.capital_price as capital_price, ts.name as category_name, ta.name as merk_name, inventories.created_at as created_at` +
                     warehouse_query +
@@ -333,8 +330,8 @@ const query = (conn: any, models: any) => {
                 }
                 if (sort_by) {
                     let sortType = sort_type;
-                    if (sort_type == "created_at") {
-                        sortType = "inventories.created_at"
+                    if (sort_type == 'created_at') {
+                        sortType = 'inventories.created_at';
                     }
                     sql += ' ORDER BY ' + sort_by + ' ' + sortType;
                 }
@@ -381,11 +378,11 @@ const query = (conn: any, models: any) => {
                         ` left join (SELECT price_buy_customers.inventory_id, price_buy_customers.price from price_buy_customers where customer_id ="` +
                         customer_id +
                         `") as psc on psc.inventory_id = inventories.inventory_id `;
-                }
-                else {
+                } else {
                     customer_query = ' ,inventories.capital_price as capital_price, inventories.name as name_inventory';
                 }
-                let sql = `SELECT inventories.inventory_id` +
+                let sql =
+                    `SELECT inventories.inventory_id` +
                     customer_query +
                     `, inventories.code as code_inventory, inventories.price, ts.name as category_name, ta.name as merk_name` +
                     ` FROM inventories join type_inventories as ts on ts.type_id = inventories.category_id join type_inventories as ta on ta.type_id = inventories.merk_id` +
@@ -417,19 +414,16 @@ const query = (conn: any, models: any) => {
                         params = [...params, parseInt(length), (parseInt(page) - 1) * parseInt(length)];
                         pool.query(sql, params, (err: Error, res: any) => {
                             pool.end(); // end connection
-                            if (err)
-                                resolve({ data: [], count: 0, status: false, errorMessage: err });
+                            if (err) resolve({ data: [], count: 0, status: false, errorMessage: err });
                             resolve({ data: res, count: countData, status: true, errorMessage: '' });
                         });
-                    }
-                    else {
+                    } else {
                         resolve({ data: [], count: 0, status: false, errorMessage: err });
                     }
                 });
             });
             return res;
-        }
-        catch (e) {
+        } catch (e) {
             console.log('Error: ', e);
         }
     }
@@ -465,11 +459,11 @@ const query = (conn: any, models: any) => {
                         ` left join (SELECT inventory_name_customers.inventory_id, inventory_name_customers.inventory_name from inventory_name_customers where customer_id ="` +
                         customer_id +
                         `") as inc on inc.inventory_id = inventories.inventory_id `;
-                }
-                else {
+                } else {
                     customer_query = ' ,inventories.price as price';
                 }
-                let sql = `SELECT inventories.inventory_id` +
+                let sql =
+                    `SELECT inventories.inventory_id` +
                     customer_query +
                     `, inventories.code as code_inventory, inventories.capital_price as capital_price, ts.name as category_name, ta.name as merk_name` +
                     warehouse_query +
@@ -485,19 +479,19 @@ const query = (conn: any, models: any) => {
                         countData = result[0].total;
                         pool.query(sql, params, (err: Error, result: any) => {
                             pool.end(); // end connection
-                            if (err) { resolve({ data: [], count: 0, status: false, errorMessage: err }); } else {
+                            if (err) {
+                                resolve({ data: [], count: 0, status: false, errorMessage: err });
+                            } else {
                                 resolve({ data: result, count: countData, status: true, errorMessage: '' });
                             }
                         });
-                    }
-                    else {
+                    } else {
                         resolve({ data: [], count: 0, status: false, errorMessage: err });
                     }
                 });
             });
             return res;
-        }
-        catch (e) {
+        } catch (e) {
             console.log('Error: ', e);
         }
     }
@@ -805,8 +799,7 @@ const query = (conn: any, models: any) => {
             const inventory_name_customer = models.inventory_name_customer;
             const res = await inventory_name_customer.create(data);
             return { data: res, status: true, errorMessage: null };
-        }
-        catch (e: any) {
+        } catch (e: any) {
             return { data: null, status: false, errorMessage: e?.original?.sqlMessage ? e?.original?.sqlMessage : e };
         }
     }
@@ -816,8 +809,7 @@ const query = (conn: any, models: any) => {
             const inventory_name_customer = models.inventory_name_customer;
             const res = await inventory_name_customer.update({ inventory_name: data.inventory_name }, { where: { inventory_id: data.inventory_id, customer_id: data.customer_id } });
             return { data: res, status: true, errorMessage: null };
-        }
-        catch (e: any) {
+        } catch (e: any) {
             return { data: null, status: false, errorMessage: e?.original?.sqlMessage ? e?.original?.sqlMessage : e };
         }
     }
@@ -827,8 +819,7 @@ const query = (conn: any, models: any) => {
             const inventory_name_customer = models.inventory_name_customer;
             const res = await inventory_name_customer.destroy({ where: { inventory_id: data.inventory_id, customer_id: data.customer_id } });
             return { data: res, status: true, errorMessage: null };
-        }
-        catch (e: any) {
+        } catch (e: any) {
             return { data: null, status: false, errorMessage: e?.original?.sqlMessage ? e?.original?.sqlMessage : e };
         }
     }
@@ -859,19 +850,16 @@ const query = (conn: any, models: any) => {
                         params = [...params, parseInt(length), (parseInt(page) - 1) * parseInt(length)];
                         pool.query(sql, params, (err: Error, res: any) => {
                             pool.end(); // end connection
-                            if (err)
-                                resolve({ data: [], count: 0, status: false, errorMessage: err });
+                            if (err) resolve({ data: [], count: 0, status: false, errorMessage: err });
                             resolve({ data: res, count: countData, status: true, errorMessage: '' });
                         });
-                    }
-                    else {
+                    } else {
                         resolve({ data: [], count: 0, status: false, errorMessage: err });
                     }
                 });
             });
             return res;
-        }
-        catch (e) {
+        } catch (e) {
             console.log('Error: ', e);
         }
     }
@@ -880,8 +868,7 @@ const query = (conn: any, models: any) => {
             const inventory_note = models.inventory_note;
             const res = await inventory_note.create(data);
             return { data: res, status: true, errorMessage: null };
-        }
-        catch (e: any) {
+        } catch (e: any) {
             return { data: null, status: false, errorMessage: e?.original?.sqlMessage ? e?.original?.sqlMessage : e };
         }
     }
@@ -910,19 +897,16 @@ const query = (conn: any, models: any) => {
                         pool.query(sql, params, (err: Error, result: any) => {
                             pool.end(); // end connection
                             console.log(err);
-                            if (err)
-                                resolve({ data: [], count: 0, status: false, errorMessage: err });
+                            if (err) resolve({ data: [], count: 0, status: false, errorMessage: err });
                             resolve({ data: result, count: countData, status: true, errorMessage: '' });
                         });
-                    }
-                    else {
+                    } else {
                         resolve({ data: [], count: 0, status: false, errorMessage: err });
                     }
                 });
             });
             return res;
-        }
-        catch (e) {
+        } catch (e) {
             console.log('Error: ', e);
         }
     }
@@ -932,8 +916,7 @@ const query = (conn: any, models: any) => {
             const price_buy_customer = models.price_buy_customer;
             const res = await price_buy_customer.create(data);
             return { data: res, status: true, errorMessage: null };
-        }
-        catch (e: any) {
+        } catch (e: any) {
             return { data: null, status: false, errorMessage: e?.original?.sqlMessage ? e?.original?.sqlMessage : e };
         }
     }
@@ -942,8 +925,7 @@ const query = (conn: any, models: any) => {
             const price_buy_customer = models.price_buy_customer;
             const res = await price_buy_customer.update({ price: data.price }, { where: { inventory_id: data.inventory_id, customer_id: data.customer_id } });
             return { data: res, status: true, errorMessage: null };
-        }
-        catch (e: any) {
+        } catch (e: any) {
             return { data: null, status: false, errorMessage: e?.original?.sqlMessage ? e?.original?.sqlMessage : e };
         }
     }
@@ -952,8 +934,7 @@ const query = (conn: any, models: any) => {
             const price_buy_customer = models.price_buy_customer;
             const res = await price_buy_customer.destroy({ where: { inventory_id: data.inventory_id, customer_id: data.customer_id } });
             return { data: res, status: true, errorMessage: null };
-        }
-        catch (e: any) {
+        } catch (e: any) {
             return { data: null, status: false, errorMessage: e?.original?.sqlMessage ? e?.original?.sqlMessage : e };
         }
     }
@@ -987,19 +968,16 @@ const query = (conn: any, models: any) => {
                         pool.query(sql, params, (err: Error, result: any) => {
                             pool.end(); // end connection
                             console.log(err);
-                            if (err)
-                                resolve({ data: [], count: 0, status: false, errorMessage: err });
+                            if (err) resolve({ data: [], count: 0, status: false, errorMessage: err });
                             resolve({ data: result, count: countData, status: true, errorMessage: '' });
                         });
-                    }
-                    else {
+                    } else {
                         resolve({ data: [], count: 0, status: false, errorMessage: err });
                     }
                 });
             });
             return res;
-        }
-        catch (e) {
+        } catch (e) {
             console.log('Error: ', e);
         }
     }
