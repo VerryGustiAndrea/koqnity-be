@@ -5,6 +5,8 @@ const updateInventory = (inventoryDB: any) => {
             inventory_id: info.inventory_id,
             category_id: info.category_id,
             merk_id: info.merk_id,
+            price: info.price,
+            capital_price: info.capital_price,
             code: '',
             ordinal_number: 0
         };
@@ -31,12 +33,8 @@ const updateInventory = (inventoryDB: any) => {
             data.ordinal_number = dataInventory.data.ordinal_number;
         }
         const res = await inventoryDB.updateInventory(data);
-        let resVariation = { status: true };
-        if (change === 1) {
-            resVariation = await inventoryDB.updateAllVariationInventory(data);
-        }
 
-        if (res.status && resVariation.status) {
+        if (res.status) {
             return res.data;
         } else {
             throw new Error(res.errorMessage);
