@@ -142,7 +142,7 @@ const query = (conn: any, models: any) => {
                     invoice_code: 'sells.code'
                 };
 
-                let sql = `SELECT sells.sell_id, sells.date_invoice, sells.code, sells.total, sells.status, sells.amount, sells.amount_pay, sells.warehouse_id,  sells.end_pay_date, customers.customer_name as customer_name from sells left join customers on sells.customer_id = customers.customer_id where sell_id is not null `;
+                let sql = `SELECT sells.sell_id, sells.date_invoice, sells.code, sells.total, if(sells.status <> 'Lunas' && sells.end_pay_date < CURDATE(), 'Jatuh Tempo', sells.status) as status, sells.amount, sells.amount_pay, sells.warehouse_id,  sells.end_pay_date, customers.customer_name as customer_name from sells left join customers on sells.customer_id = customers.customer_id where sell_id is not null `;
                 let params: any = [];
 
                 let countData = 0;
@@ -155,8 +155,17 @@ const query = (conn: any, models: any) => {
                     sql += ' )';
                 }
                 if (status) {
-                    sql += ' AND sells.status = ?';
-                    params = [...params, status];
+                    if (status == 'Lunas') {
+                        sql += ' AND sells.status = ?';
+                        params = [...params, status];
+                    }
+                    else if (status == 'Belum Dibayar' || status == 'Dibayar Sebagian') {
+                        sql += ' AND sells.status = ? AND sells.end_pay_date >= curdate()';
+                        params = [...params, status];
+                    }
+                    else {
+                        sql += ' AND sells.status != "LUNAS" AND sells.end_pay_date < curdate()';
+                    }
                 }
                 if (customer) {
                     sql += ' AND sells.customer_id in (' + customer + ')';
@@ -206,7 +215,7 @@ const query = (conn: any, models: any) => {
             const pool = await conn();
 
             const res = await new Promise((resolve) => {
-                let sql = `SELECT SUM(CASE WHEN status = 'Belum Dibayar' THEN 1 ELSE 0 END) AS unpaid, SUM(CASE WHEN status = 'Dibayar Sebagian' THEN 1 ELSE 0 END) AS partial_paid, SUM(CASE WHEN status = 'Lunas' THEN 1 ELSE 0 END) AS paid, SUM(CASE WHEN status = 'Jatuh Tempo' THEN 1 ELSE 0 END) AS over_unpaid, SUM(CASE WHEN status = 'Lunas' THEN 1 ELSE 0 END) AS paid, SUM(CASE WHEN status = 'Retur' THEN 1 ELSE 0 END) AS retur
+                let sql = `SELECT SUM(CASE WHEN status = 'Belum Dibayar' THEN 1 ELSE 0 END) AS unpaid, SUM(CASE WHEN status = 'Dibayar Sebagian' THEN 1 ELSE 0 END) AS partial_paid, SUM(CASE WHEN status = 'Lunas' THEN 1 ELSE 0 END) AS paid, SUM(CASE WHEN status != 'LUNAS' AND end_pay_date < CURDATE() THEN 1 ELSE 0 END) AS over_unpaid, SUM(CASE WHEN status = 'Lunas' THEN 1 ELSE 0 END) AS paid, SUM(CASE WHEN status = 'Retur' THEN 1 ELSE 0 END) AS retur
                             FROM sells`;
                 let params: any = [];
 

@@ -94,7 +94,7 @@ const query = (conn: any, models: any) => {
                     invoice_code: 'buys.code'
                 };
 
-                let sql = `SELECT buys.buy_id, buys.date_invoice, buys.code, buys.total, buys.status, buys.amount, buys.amount_pay,  buys.end_pay_date, customers.customer_name as customer_name from buys left join customers on buys.vendor_id = customers.customer_id where buy_id is not null `;
+                let sql = `SELECT buys.buy_id, buys.date_invoice, buys.code, buys.total,  if(buys.status <> 'Lunas' && buys.end_pay_date < CURDATE(), 'Jatuh Tempo', buys.status) as status, buys.amount, buys.amount_pay,  buys.end_pay_date, customers.customer_name as customer_name from buys left join customers on buys.vendor_id = customers.customer_id where buy_id is not null `;
                 let params: any = [];
 
                 let countData = 0;
@@ -107,8 +107,17 @@ const query = (conn: any, models: any) => {
                     sql += ' )';
                 }
                 if (status) {
-                    sql += ' AND buys.status = ?';
-                    params = [...params, status];
+                    if (status == 'Lunas') {
+                        sql += ' AND buys.status = ?';
+                        params = [...params, status];
+                    }
+                    else if (status == 'Belum Dibayar' || status == 'Dibayar Sebagian') {
+                        sql += ' AND buys.status = ? AND buys.end_pay_date >= curdate()';
+                        params = [...params, status];
+                    }
+                    else {
+                        sql += ' AND buys.status != "LUNAS" AND buys.end_pay_date < curdate()';
+                    }
                 }
                 if (customer) {
                     sql += ' AND buys.customer_id in (' + customer + ')';
@@ -161,7 +170,7 @@ const query = (conn: any, models: any) => {
             const pool = await conn();
 
             const res = await new Promise((resolve) => {
-                let sql = `SELECT SUM(CASE WHEN status = 'Belum Dibayar' THEN 1 ELSE 0 END) AS unpaid, SUM(CASE WHEN status = 'Dibayar Sebagian' THEN 1 ELSE 0 END) AS partial_paid, SUM(CASE WHEN status = 'Lunas' THEN 1 ELSE 0 END) AS paid, SUM(CASE WHEN status = 'Jatuh Tempo' THEN 1 ELSE 0 END) AS over_unpaid, SUM(CASE WHEN status = 'Lunas' THEN 1 ELSE 0 END) AS paid, SUM(CASE WHEN status = 'Retur' THEN 1 ELSE 0 END) AS retur
+                let sql = `SELECT SUM(CASE WHEN status = 'Belum Dibayar' THEN 1 ELSE 0 END) AS unpaid, SUM(CASE WHEN status = 'Dibayar Sebagian' THEN 1 ELSE 0 END) AS partial_paid, SUM(CASE WHEN status = 'Lunas' THEN 1 ELSE 0 END) AS paid, SUM(CASE WHEN status != 'LUNAS' AND end_pay_date < CURDATE() THEN 1 ELSE 0 END) AS over_unpaid, SUM(CASE WHEN status = 'Lunas' THEN 1 ELSE 0 END) AS paid, SUM(CASE WHEN status = 'Retur' THEN 1 ELSE 0 END) AS retur
                             FROM buys`;
                 let params: any = [];
 

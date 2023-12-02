@@ -229,11 +229,11 @@ const query = (conn: any, models: any) => {
         }
     }
 
-    async function getSellOfProduct(data: { search: string; inventory: string; warehouse: string; start_date: string; end_date: string }) {
+    async function getSellOfProduct(data: { search: string; inventory: string; warehouse: string; start_date: string; end_date: string, customer: string }) {
         try {
             const pool = await conn();
 
-            const { start_date, end_date, inventory, warehouse } = data; // deconstruct
+            const { start_date, end_date, inventory, warehouse, customer } = data; // deconstruct
             const res = await new Promise((resolve) => {
                 const sortField: any = {
                     customer_name: 'customers.customer_name',
@@ -250,6 +250,10 @@ const query = (conn: any, models: any) => {
                 }
                 if (warehouse) {
                     sql += ' AND sells.warehouse_id in (' + warehouse + ')';
+                }
+                console.log(customer)
+                if (customer) {
+                    sql += ' AND sells.customer_id in (' + customer + ')';
                 }
                 if (start_date) {
                     sql += ' AND DATE(sell_items.created_at) >= ?';

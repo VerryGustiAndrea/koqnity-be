@@ -2,7 +2,7 @@ const selectSellProduct = (selectSellProductAction: Function) => {
     return async function get(httpRequest: any) {
         try {
             const { source = {}, ...info } = httpRequest.body;
-            const { length, page, inventory, warehouse, start_date, end_date } = httpRequest.query;
+            const { length, page, inventory, warehouse, start_date, end_date, customer } = httpRequest.query;
             source.ip = httpRequest.ip;
             source.browser = httpRequest.headers['User-Agent'];
             if (httpRequest.headers['Referer']) {
@@ -14,7 +14,8 @@ const selectSellProduct = (selectSellProductAction: Function) => {
                 inventory,
                 warehouse,
                 start_date,
-                end_date
+                end_date,
+                customer
             });
             return {
                 headers: {
