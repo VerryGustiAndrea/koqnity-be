@@ -23,6 +23,7 @@ module.exports = (sequelize, DataTypes) => {
             },
             ordinal_number: DataTypes.INTEGER(),
             code: DataTypes.STRING(255),
+            reference_number: DataTypes.STRING(255),
             customer_id: DataTypes.STRING(255),
             date_invoice: DataTypes.DATE,
             pay_type: DataTypes.STRING(255),

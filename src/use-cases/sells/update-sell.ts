@@ -230,7 +230,9 @@ const updateSell = (makeItem: Function, sellDB: any, inventoryDB: any, customerD
                 });
                 let dataItem = await makeItem(info.item[i]); // entity
                 dataItem = {
+                    history_id: dataItem.gHistory(),
                     qty: dataItem.getQTY(),
+                    inventory_id: dataItem.getInventoryID(),
                     item_id: sellItemOldData.item_id,
                     warehouse_id: data.warehouse_id,
                     date: data.date_invoice,
@@ -247,7 +249,7 @@ const updateSell = (makeItem: Function, sellDB: any, inventoryDB: any, customerD
                     update_at: new Date()
                 };
                 dataItem.type = 'add';
-                dataItem.stock_qty = sellItemOldData.qty - itemData.qty;
+                dataItem.stock_qty = itemData.qty;
                 let warehouseInfo = await inventoryDB.selectStock({ inventory_id: dataItem.inventory_id, warehouse_id: data.warehouse_id });
                 dataItem.warehouseInfo = warehouseInfo.data;
                 const ordinalNumberItem = await inventoryDB.getOrdinalNumberHistory();
@@ -264,23 +266,24 @@ const updateSell = (makeItem: Function, sellDB: any, inventoryDB: any, customerD
                 if (warehouseInfo.data) {
                     let dataWarehouse = warehouseInfo.data;
                     dataItem.qty_before = dataWarehouse.stock_qty;
-                    dataItem.qty_after = dataWarehouse.stock_qty + sellItemOldData.qty;
+                    dataItem.qty_after = dataWarehouse.stock_qty + dataItem.qty;
                     let updateStock = await inventoryDB.updateStock({
                         stock_qty: dataItem.qty_after,
                         inventory_id: dataItem.inventory_id,
                         warehouse_id: dataItem.warehouse_id,
                         history_stock: Object.assign({}, dataItem)
                     });
+                    console.log(updateStock);
+                    console.log('non');
                 } else {
                     dataItem.qty_before = 0;
-                    dataItem.qty_after = sellItemOldData.qty;
-                    let updateStock = await inventoryDB.updateStock({
-                        stock_qty: dataItem.qty_after,
-                        inventory_id: dataItem.inventory_id,
-                        warehouse_id: dataItem.warehouse_id,
-                        history_stock: Object.assign({}, dataItem)
-                    });
+                    dataItem.qty_after = sellItemOldData.qty - dataItem.qty;
+                    let updateStock = await inventoryDB.addStock(Object.assign(Object.assign({}, dataItem), { stock_qty: dataItem.qty_after, stock_qty_history: dataItem.stock_qty }));
+                    console.log(updateStock);
+                    console.log('else');
                 }
+                console.log(dataItem);
+                console.log('dataItem');
                 let sellAction = await sellDB.deleteItem(dataItem);
             }
         }

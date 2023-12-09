@@ -7,6 +7,7 @@ import makeInventoryNote from './make-inventory-note';
 import makePriceSellCustomer from './make-price-sell-customer';
 import makeType from './make-type';
 import makeVariation from './make-variation';
+import makeWarehouse from './make-warehouse';
 
 // ####
 const makeInventorys = makeInventory(_.enc, _.gInventoryID);
@@ -15,6 +16,7 @@ const makeTypes = makeType(_.enc, _.gTypeID);
 const makePriceSellCustomers = makePriceSellCustomer(_.enc, _.gTypeID);
 const makeInventoryNameCustomers = makeInventoryNameCustomer();
 const makeInventoryNotes = makeInventoryNote();
+const makeWarehouses = makeWarehouse(_.enc, _.gWarehouseId);
 // ####
 
 const entity = {
@@ -23,7 +25,8 @@ const entity = {
     makeTypes,
     makePriceSellCustomers,
     makeInventoryNameCustomers,
-    makeInventoryNotes
+    makeInventoryNotes,
+    makeWarehouses
 };
 
 export default entity;

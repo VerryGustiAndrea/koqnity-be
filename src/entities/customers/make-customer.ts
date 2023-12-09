@@ -1,11 +1,14 @@
 const makeCustomer = (encrypt: Function, generateCustomerId: Function) => {
     return function make(info: any) {
-        const { contact_id, customer_name, customer_status, customer_npwp_number, customer_pic_name, customer_email, customer_phone_number, customer_country_code } = info; // deconstruct
+        const { contact_id, customer_name, customer_address, customer_status, customer_npwp_number, customer_pic_name, customer_email, customer_phone_number, customer_country_code } = info; // deconstruct
         if (!customer_name) {
             throw new Error('Please enter company name.');
         }
         if (!customer_status) {
             throw new Error('Please enter customer status.');
+        }
+        if (!customer_address) {
+            throw new Error('Please enter customer address.');
         }
         if (!contact_id) {
             throw new Error('Please enter contact id.');
@@ -19,12 +22,13 @@ const makeCustomer = (encrypt: Function, generateCustomerId: Function) => {
 
         return Object.freeze({
             getCustomerName: () => customer_name,
+            getCustomerAddress: () => customer_address,
             getContactId: () => contact_id,
             getCustomerStatus: () => customer_status,
             getCustomerNPWPNumber: () => customer_npwp_number,
             getCustomerPICName: () => customer_pic_name,
             getCustomerEmail: () => customer_email,
-            getCustomerPhoneNumber: () => customer_country_code + customer_phone_number,
+            getCustomerPhoneNumber: () => (customer_phone_number ? customer_country_code + customer_phone_number : ''),
             getCustomerCountryCode: () => (customer_phone_number ? customer_country_code : ''),
             getCustomerId: () => generateCustomerId()
         });

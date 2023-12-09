@@ -127,11 +127,12 @@ const query = (conn: any, models: any) => {
         start_date: string;
         end_date: string;
         sort_by: string;
-        sort_type: string;
+        sort_type: string; length: string;
+        page: string;
     }) {
         try {
             const pool = await conn();
-            const { search, status, customer, min_price, max_price, start_date, end_date, sort_by, sort_type } = data; // deconstruct
+            const { search, status, customer, min_price, max_price, start_date, end_date, sort_by, sort_type, length, page } = data; // deconstruct
             const res = await new Promise((resolve) => {
                 const sortField: any = {
                     customer_name: 'customers.customer_name',
@@ -188,6 +189,8 @@ const query = (conn: any, models: any) => {
                 pool.query(`SELECT count(*) as total from(${sql}) as dtCount`, params, (err: Error, result: any) => {
                     if (!err) {
                         countData = result[0].total;
+                        sql += ' LIMIT ? OFFSET ?';
+                        params = [...params, parseInt(length), (parseInt(page) - 1) * parseInt(length)];
                         pool.query(sql, params, (err: Error, res: Response) => {
                             pool.end(); // end connection
                             if (err) resolve({ data: [], count: 0, status: false, errorMessage: err });

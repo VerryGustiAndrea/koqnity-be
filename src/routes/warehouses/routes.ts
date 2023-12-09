@@ -8,8 +8,10 @@ const route = (router: any, makeExpressCallback: Function, validateAuth: Functio
     router.get('/', makeExpressCallback(warehouseController.selectListWarehouses));
 
     // POST
+    router.post('/', validateAuth, makeExpressCallback(warehouseController.warehouseAdds));
 
     // PATCH
+    router.patch('/', validateAuth, makeExpressCallback(warehouseController.warehouseUpdates));
     // DELETE
 
     return router;

@@ -6,6 +6,7 @@ const route = (router: any, makeExpressCallback: Function, validateAuth: Functio
     router.get('/', validateAuth, makeExpressCallback(customerController.selectCustomers));
     router.get('/list', validateAuth, makeExpressCallback(customerController.selectListCustomers));
     router.get('/contact', validateAuth, makeExpressCallback(customerController.selectContactTypes));
+    router.get('/owner', validateAuth, makeExpressCallback(customerController.selectOwners));
 
     // POST
     router.post('/', validateAuth, makeExpressCallback(customerController.customerAdds));

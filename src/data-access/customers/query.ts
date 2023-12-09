@@ -8,7 +8,8 @@ const query = (conn: any, models: any) => {
         selectCustomer,
         updateCustomer,
         getListCustomer,
-        getContactType
+        getContactType,
+        selectOwner
     });
 
     async function addCustomer(data: any) {
@@ -41,6 +42,16 @@ const query = (conn: any, models: any) => {
         }
     }
 
+    async function selectOwner(data: String) {
+        try {
+            const customer = models.customer;
+            const res = await customer.findOne({ where: { contact_id: 3 } });
+            return { data: res, status: true, errorMessage: null };
+        } catch (e: any) {
+            return { data: null, status: false, errorMessage: e?.original?.sqlMessage ? e?.original?.sqlMessage : e };
+        }
+    }
+
     async function getListCustomer(data: { contact_id: Number; customer_status: string; length: string; page: string; search: string; sort_by: string; sort_type: string }) {
         try {
             const pool = await conn();
@@ -57,7 +68,7 @@ const query = (conn: any, models: any) => {
                     customer_phone_number: 'customers.customer_phone_number'
                 };
 
-                let sql = `SELECT customers.customer_id, customers.customer_code, customers.customer_name, customers.customer_status, customers.customer_npwp_number, customers.customer_pic_name, customers.customer_email, customers.customer_phone_number, customers.created_at, customers.updated_at, ct.name as contact_name FROM customers left join contact_types as ct on ct.id = customers.contact_id where customers.id is not null `;
+                let sql = `SELECT customers.customer_id, customers.customer_code, customers.customer_name, customers.customer_status, customers.customer_npwp_number, customers.customer_pic_name, customers.customer_email, customers.customer_phone_number, customers.created_at, customers.updated_at, ct.name as contact_name FROM customers left join contact_types as ct on ct.id = customers.contact_id where customers.contact_id <> 3 `;
                 let params: any = [];
                 if (customer_status) {
                     sql += ' and customers.customer_status = ?';
@@ -107,7 +118,7 @@ const query = (conn: any, models: any) => {
     async function getContactType() {
         try {
             const contact_type = models.contact_type;
-            const res = await contact_type.findAll();
+            const res = await contact_type.findAll({ where: { id: [1, 2] } });
             return { data: res, status: true, errorMessage: null };
         } catch (e: any) {
             return { data: null, status: false, errorMessage: e?.original?.sqlMessage ? e?.original?.sqlMessage : e };

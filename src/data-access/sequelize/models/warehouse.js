@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
                 primaryKey: true
             },
             warehouse_name: DataTypes.STRING(255),
-            warehouse_city: DataTypes.STRING(255),
+            address: DataTypes.STRING(255),
             createdAt: {
                 field: 'created_at',
                 type: DataTypes.DATE

@@ -22,6 +22,7 @@ module.exports = (sequelize, DataTypes) => {
             contact_id: DataTypes.INTEGER,
             customer_code: DataTypes.STRING(255),
             customer_name: DataTypes.STRING(100),
+            customer_address: DataTypes.STRING(100),
             customer_status: DataTypes.STRING(10),
             customer_npwp_number: DataTypes.STRING(50),
             customer_pic_name: DataTypes.STRING(100),

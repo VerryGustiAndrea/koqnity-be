@@ -10,6 +10,7 @@ const addCustomer = (makeCustomer: Function, customerDB: any) => {
             customer_npwp_number: data.getCustomerNPWPNumber(),
             customer_pic_name: data.getCustomerPICName(),
             customer_email: data.getCustomerEmail(),
+            customer_address: data.getCustomerAddress(),
             customer_phone_number: data.getCustomerPhoneNumber(),
             customer_country_code: data.getCustomerCountryCode(),
             created_at: new Date(),

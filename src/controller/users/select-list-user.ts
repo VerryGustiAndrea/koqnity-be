@@ -1,4 +1,4 @@
-const selectListWarehouse = (selectListWarehouseAction: Function) => {
+const selectListUser = (selectListUserAction: Function) => {
     return async function get(httpRequest: any) {
         try {
             const { source = {}, ...info } = httpRequest.body;
@@ -8,7 +8,7 @@ const selectListWarehouse = (selectListWarehouseAction: Function) => {
             if (httpRequest.headers['Referer']) {
                 source.referrer = httpRequest.headers['Referer'];
             }
-            const res = await selectListWarehouseAction({
+            const res = await selectListUserAction({
                 length,
                 page,
                 search, sort_by, sort_type
@@ -39,4 +39,4 @@ const selectListWarehouse = (selectListWarehouseAction: Function) => {
     };
 };
 
-export default selectListWarehouse;
+export default selectListUser;

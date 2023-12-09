@@ -6,9 +6,11 @@ import selectCustomer from './select-customer';
 import updateCustomer from './update-customer';
 import selectListCustomer from './select-list-customer';
 import selectContactType from './select-contact-type';
+import selectOwner from './select-owner';
 
 const addCustomers = addCustomer(entity.makeCustomers, customerDB);
 const selectCustomers = selectCustomer(customerDB);
+const selectOwners = selectOwner(customerDB);
 const updateCustomers = updateCustomer(customerDB);
 const selectListCustomers = selectListCustomer(customerDB);
 const selectContactTypes = selectContactType(customerDB);
@@ -19,7 +21,8 @@ const cutomerUC = {
     selectCustomers,
     updateCustomers,
     selectListCustomers,
-    selectContactTypes
+    selectContactTypes,
+    selectOwners
 };
 
 export default cutomerUC;
