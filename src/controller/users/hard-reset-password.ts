@@ -42,8 +42,7 @@ const hardResetPassword = (hardResetPasswordAction: Function, selectUserAction: 
                         statusCode: 200,
                         body: { data: { new_password: result }, errorMessage: null, statusCode: 200 }
                     };
-                }
-                else {
+                } else {
                     return {
                         headers: {
                             'Content-Type': 'application/json'

@@ -13,8 +13,8 @@ import updateWarehouse from './update-warehouse';
 const getWarehouses = getWarehouse(warehouseDB);
 const selectListWarehouses = selectListWarehouse(warehouseDB);
 const selectWarehouses = selectWarehouse(warehouseDB);
-const addWarehouses = addWarehouse(entity.makeWarehouses, warehouseDB,);
-const updateWarehouses = updateWarehouse(warehouseDB,);
+const addWarehouses = addWarehouse(entity.makeWarehouses, warehouseDB);
+const updateWarehouses = updateWarehouse(warehouseDB);
 
 // inventory use case
 const warehouseUC = {

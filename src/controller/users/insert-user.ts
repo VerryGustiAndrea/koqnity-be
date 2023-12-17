@@ -7,14 +7,25 @@ const userAdd = (addUsersAction: Function, insertLogs: Function) => {
             if (httpRequest.headers['Referer']) {
                 source.referrer = httpRequest.headers['Referer'];
             }
+
+            let result = '';
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            const charactersLength = characters.length;
+            let counter = 0;
+            while (counter < 10) {
+                result += characters.charAt(Math.floor(Math.random() * charactersLength));
+                counter += 1;
+            }
+
             const posted = await addUsersAction({
                 ...info,
+                password: result,
                 source
             });
             let insertLog = await insertLogs({
                 type_activity: 'create_user',
                 token: httpRequest.headers['token'],
-                data: JSON.stringify({ username: info.username, full_name: info.full_name, role: info.role }),
+                data: JSON.stringify({ username: info.username, full_name: info.full_name, role: info.role, }),
                 status: 1
             });
             return {
@@ -22,7 +33,7 @@ const userAdd = (addUsersAction: Function, insertLogs: Function) => {
                     'Content-Type': 'application/json'
                 },
                 statusCode: 201,
-                body: { data: posted, statusCode: 201, errorMessage: null }
+                body: { data: { password: result, }, statusCode: 201, errorMessage: null }
             };
         } catch (e: any) {
             return {

@@ -127,7 +127,8 @@ const query = (conn: any, models: any) => {
         start_date: string;
         end_date: string;
         sort_by: string;
-        sort_type: string; length: string;
+        sort_type: string;
+        length: string;
         page: string;
     }) {
         try {

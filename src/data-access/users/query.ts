@@ -156,7 +156,7 @@ const query = (conn: any, models: any) => {
                 const sortField: any = {
                     username: 'username',
                     full_name: 'full_name',
-                    role: 'roles.name',
+                    role: 'roles.name'
                 };
 
                 let sql = `SELECT user_id, username, full_name, last_login, roles.name as role_name, users.created_at FROM users left join roles on users.role = roles.role_id where users.user_id is not null `;

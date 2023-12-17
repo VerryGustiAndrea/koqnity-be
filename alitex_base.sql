@@ -1,9 +1,9 @@
--- phpMyAdmin SQL Dump
+ -- phpMyAdmin SQL Dump
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Dec 09, 2023 at 04:07 AM
+-- Generation Time: Dec 10, 2023 at 01:18 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -38,12 +38,6 @@ CREATE TABLE `activity_logs` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `activity_logs`
---
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `buys`
 --
 
@@ -68,11 +62,6 @@ CREATE TABLE `buys` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `buys`
---
--- --------------------------------------------------------
-
---
 -- Table structure for table `buy_items`
 --
 
@@ -90,12 +79,6 @@ CREATE TABLE `buy_items` (
   `created_at` datetime NOT NULL DEFAULT '0000-00-00 00:00:00' ON UPDATE current_timestamp(),
   `updated_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `buy_items`
---
-
--- --------------------------------------------------------
 
 --
 -- Table structure for table `cash_flows`
@@ -164,7 +147,7 @@ CREATE TABLE `customers` (
 --
 
 INSERT INTO `customers` (`id`, `customer_id`, `contact_id`, `customer_code`, `customer_name`, `customer_status`, `customer_npwp_number`, `customer_address`, `customer_pic_name`, `customer_email`, `customer_phone_number`, `customer_country_code`, `created_at`, `updated_at`) VALUES
-(1, 'CUSe826c7ee1cd1e35e7c0e372c18', 3, 'A0001', 'CV Alitex oe', 'PKP', '12.312.312.3-243.123', 'Bandung', 'Ricky', 'Ricky.hilmi@gmail.com', '6274837483227', '62', '2023-12-08 18:00:43', '2023-12-09 02:56:29');
+(1, 'CUSowner', 3, 'A0001', 'CV Alitex oe', 'PKP', '12.312.312.3-243.123', 'Bandung', 'Ricky', 'Ricky.hilmi@gmail.com', '6274837483227', '62', '2023-12-08 18:00:43', '2023-12-09 02:56:29');
 
 -- --------------------------------------------------------
 
@@ -191,12 +174,6 @@ CREATE TABLE `history_stocks` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `history_stocks`
---
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `inventories`
 --
 
@@ -214,12 +191,6 @@ CREATE TABLE `inventories` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `inventories`
---
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `inventory_name_customers`
 --
 
@@ -233,13 +204,6 @@ CREATE TABLE `inventory_name_customers` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `inventory_name_customers`
---
-
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `inventory_notes`
 --
 
@@ -250,12 +214,6 @@ CREATE TABLE `inventory_notes` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `inventory_notes`
---
-
--- --------------------------------------------------------
 
 --
 -- Table structure for table `pay_buy_histories`
@@ -288,12 +246,6 @@ CREATE TABLE `pay_histories` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `pay_histories`
---
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `price_buy_customers`
 --
 
@@ -307,12 +259,6 @@ CREATE TABLE `price_buy_customers` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `price_buy_customers`
---
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `price_sell_customers`
 --
 
@@ -324,12 +270,6 @@ CREATE TABLE `price_sell_customers` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `price_sell_customers`
---
-
--- --------------------------------------------------------
 
 --
 -- Table structure for table `roles`
@@ -378,12 +318,6 @@ CREATE TABLE `sells` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `sells`
---
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `sell_items`
 --
 
@@ -400,12 +334,6 @@ CREATE TABLE `sell_items` (
   `created_at` datetime NOT NULL DEFAULT '0000-00-00 00:00:00' ON UPDATE current_timestamp(),
   `updated_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `sell_items`
---
-
--- --------------------------------------------------------
 
 --
 -- Table structure for table `SequelizeMeta`
@@ -468,12 +396,6 @@ CREATE TABLE `stock_warehouses` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `stock_warehouses`
---
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `type_inventories`
 --
 
@@ -485,12 +407,6 @@ CREATE TABLE `type_inventories` (
   `created_at` datetime NOT NULL,
   `updated_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `type_inventories`
---
-
--- --------------------------------------------------------
 
 --
 -- Table structure for table `users`
@@ -514,7 +430,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`user_id`, `username`, `full_name`, `role`, `hash_password`, `profile_picture`, `token`, `last_login`, `created_at`, `updated_at`) VALUES
-('ROWe826c6e81adee45d7e0c38271f', 'admin', 'Admin', 2, 'e822cdea1bd1e253', NULL, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRlIjoiMjAyMy0xMi0wOVQwMjozNTo1Mi40NjBaIiwiaWF0IjoxNzAyMDg5MzUyfQ.XIlpGgjwI7QsDorPD7kbm-Gsci6G82gZrsPZXkaHabU', '2023-12-09 02:35:52', '2023-06-11 13:53:33', '2023-12-09 02:35:52');
+('ROWe826c6e81adee45d7e0c38271f', 'admin', 'Admin', 2, 'e822cdea1bd1e253', NULL, NULL, '2023-12-09 02:35:52', '2023-06-11 13:53:33', '2023-12-09 18:20:20');
 
 -- --------------------------------------------------------
 
@@ -535,30 +451,16 @@ CREATE TABLE `variation_inventories` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `variation_inventories`
---
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `warehouses`
 --
 
 CREATE TABLE `warehouses` (
   `warehouse_id` varchar(255) NOT NULL,
   `warehouse_name` varchar(255) NOT NULL,
-  `warehouse_city` int(11) NOT NULL,
+  `address` text DEFAULT NULL,
   `created_at` datetime NOT NULL DEFAULT '0000-00-00 00:00:00' ON UPDATE current_timestamp(),
   `updated_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `warehouses`
---
-
-INSERT INTO `warehouses` (`warehouse_id`, `warehouse_name`, `warehouse_city`, `created_at`, `updated_at`) VALUES
-('Bandung', 'Bandung', 1, '2023-05-26 06:22:44', NULL),
-('Jakarta', 'Jakarta', 1, '2023-05-26 06:23:01', NULL);
 
 --
 -- Indexes for dumped tables
@@ -781,7 +683,7 @@ ALTER TABLE `status_payments`
 -- AUTO_INCREMENT for table `stock_warehouses`
 --
 ALTER TABLE `stock_warehouses`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- Constraints for dumped tables

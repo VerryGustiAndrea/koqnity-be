@@ -11,7 +11,9 @@ const selectListWarehouse = (selectListWarehouseAction: Function) => {
             const res = await selectListWarehouseAction({
                 length,
                 page,
-                search, sort_by, sort_type
+                search,
+                sort_by,
+                sort_type
             });
             return {
                 headers: {

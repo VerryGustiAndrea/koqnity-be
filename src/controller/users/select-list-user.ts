@@ -11,7 +11,9 @@ const selectListUser = (selectListUserAction: Function) => {
             const res = await selectListUserAction({
                 length,
                 page,
-                search, sort_by, sort_type
+                search,
+                sort_by,
+                sort_type
             });
             return {
                 headers: {
