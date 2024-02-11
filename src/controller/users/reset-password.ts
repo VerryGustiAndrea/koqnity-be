@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 
-const resetPassword = (resetPasswordAction: Function, selectUserAction: Function, enc: Function, dec: Function, insertLogs: Function) => {
+const resetPassword = (resetPasswordAction: Function, selectUserAction: Function, enc: Function, dec: Function) => {
     return async function get(httpRequest: any) {
         const headers = {
             'Content-Type': 'application/json'
@@ -25,12 +25,7 @@ const resetPassword = (resetPasswordAction: Function, selectUserAction: Function
                     if (info.newPassword == info.newPasswordRepeat) {
                         let updatePassword = await resetPasswordAction({ token: httpRequest.headers['token'], hash_password: enc(info.newPassword) });
                         if (updatePassword.status) {
-                            let insertLog = await insertLogs({
-                                type_activity: 'update_password_user',
-                                token: httpRequest.headers['token'],
-                                data: JSON.stringify({}),
-                                status: 1
-                            });
+
                             return {
                                 headers: {
                                     'Content-Type': 'application/json'

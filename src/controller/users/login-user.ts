@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 
-const userLogin = (loginUsersAction: Function, insertTokenAction: Function, dec: Function, generateToken: Function, insertLogs: Function) => {
+const userLogin = (loginUsersAction: Function, insertTokenAction: Function, dec: Function, generateToken: Function) => {
     return async function get(httpRequest: any) {
         const headers = {
             'Content-Type': 'application/json'
@@ -28,7 +28,6 @@ const userLogin = (loginUsersAction: Function, insertTokenAction: Function, dec:
                     let updateToken = await insertTokenAction(data);
                     console.log(updateToken);
                     if (updateToken.status) {
-                        let insertLog = await insertLogs({ type_activity: 'login_user', token: token, data: JSON.stringify({ username: view[0].username }), status: 1 });
                         return {
                             headers: {
                                 'Content-Type': 'application/json'

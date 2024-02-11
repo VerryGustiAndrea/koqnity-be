@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 
-const userLogout = (userLogoutAction: Function, insertLogs: Function) => {
+const userLogout = (userLogoutAction: Function) => {
     return async function post(httpRequest: any) {
         try {
             const { source = {}, ...info } = httpRequest.body;
@@ -9,12 +9,7 @@ const userLogout = (userLogoutAction: Function, insertLogs: Function) => {
             if (httpRequest.headers['Referer']) {
                 source.referrer = httpRequest.headers['Referer'];
             }
-            let insertLog = await insertLogs({
-                type_activity: 'logout_user',
-                token: httpRequest.headers['token'],
-                data: JSON.stringify({}),
-                status: 1
-            });
+
             const posted = await userLogoutAction({
                 ...info,
                 token: httpRequest.headers['token'],

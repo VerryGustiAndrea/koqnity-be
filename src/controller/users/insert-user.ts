@@ -1,4 +1,4 @@
-const userAdd = (addUsersAction: Function, insertLogs: Function) => {
+const userAdd = (addUsersAction: Function) => {
     return async function post(httpRequest: any) {
         try {
             const { source = {}, ...info } = httpRequest.body;
@@ -21,12 +21,6 @@ const userAdd = (addUsersAction: Function, insertLogs: Function) => {
                 ...info,
                 password: result,
                 source
-            });
-            let insertLog = await insertLogs({
-                type_activity: 'create_user',
-                token: httpRequest.headers['token'],
-                data: JSON.stringify({ username: info.username, full_name: info.full_name, role: info.role }),
-                status: 1
             });
             return {
                 headers: {

@@ -13,7 +13,7 @@ const route = (router: any, makeExpressCallback: Function, validateAuth: Functio
     router.post('/logout', validateAuth, makeExpressCallback(userController.userLogouts));
     router.post('/update', validateAuth, makeExpressCallback(userController.userUpdates));
     router.post('/reset-password', validateAuth, makeExpressCallback(userController.resetPasswords));
-    router.post('/hard-reset-password', validateAuth, makeExpressCallback(userController.hardResetPasswords));
+    router.post('/hard-reset-password', makeExpressCallback(userController.hardResetPasswords));
 
     // PATCH
 

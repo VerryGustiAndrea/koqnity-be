@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 
-const userUpdate = (userUpdateAction: Function, insertLogs: Function) => {
+const userUpdate = (userUpdateAction: Function) => {
     return async function post(httpRequest: any) {
         try {
             const { source = {}, ...info } = httpRequest.body;
@@ -14,12 +14,7 @@ const userUpdate = (userUpdateAction: Function, insertLogs: Function) => {
                 token: httpRequest.headers['token'],
                 source
             });
-            let insertLog = await insertLogs({
-                type_activity: 'update_profile_user',
-                token: httpRequest.headers['token'],
-                data: JSON.stringify({ full_name: info.full_name }),
-                status: 1
-            });
+
             return {
                 headers: {
                     'Content-Type': 'application/json'

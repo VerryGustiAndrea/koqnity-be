@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 
-const hardResetPassword = (hardResetPasswordAction: Function, selectUserAction: Function, enc: Function, dec: Function, insertLogs: Function) => {
+const hardResetPassword = (hardResetPasswordAction: Function, selectUserAction: Function, enc: Function, dec: Function) => {
     return async function get(httpRequest: any) {
         const headers = {
             'Content-Type': 'application/json'
@@ -29,12 +29,6 @@ const hardResetPassword = (hardResetPasswordAction: Function, selectUserAction: 
                 }
                 let updatePassword = await hardResetPasswordAction({ user_id: dataRequest.user_id, hash_password: enc(result) });
                 if (updatePassword.status) {
-                    let insertLog = await insertLogs({
-                        type_activity: 'update_password_user',
-                        token: httpRequest.headers['token'],
-                        data: JSON.stringify({}),
-                        status: 1
-                    });
                     return {
                         headers: {
                             'Content-Type': 'application/json'
